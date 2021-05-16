@@ -7,14 +7,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.nio.file.Files;
+
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
+
+
 
 
     @Override

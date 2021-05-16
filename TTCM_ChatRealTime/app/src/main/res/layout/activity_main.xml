@@ -21,10 +21,6 @@
             app:menu="@menu/menu_main"/>
 
 
-
-
-
-
     </com.google.android.material.appbar.AppBarLayout>
 
 
