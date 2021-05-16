@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+
+    <ImageView
+        android:id="@+id/img_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txt_login_username"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginBottom="71dp"
+        android:src="@drawable/logo" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txt_login_username"
+        android:layout_alignStart="@+id/img_login"
+        android:layout_alignEnd="@+id/img_login"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="77dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="53dp"
+        android:layout_marginBottom="71dp"
+        android:gravity="center"
+        android:text="Mini Chat"
+        android:textSize="35dp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txt_login_username"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_above="@+id/txt_login_password"
+        android:layout_alignStart="@+id/txt_login_password"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/black_boder"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textColor="@android:color/background_dark"
+        android:hint="Tên đăng nhập"
+        android:textSize="20dp" />
+
+    <EditText
+        android:id="@+id/txt_login_password"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_above="@+id/btn_login"
+        android:layout_alignLeft="@+id/btn_login"
+        android:layout_alignStart="@+id/btn_login"
+        android:layout_marginBottom="54dp"
+        android:background="@drawable/black_boder"
+        android:hint="Mật khẩu"
+        android:inputType="textPassword"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textSize="20dp" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_login"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="53dp"
+        android:layout_marginBottom="174dp"
+        android:background="@drawable/while_packground"
+        android:text="Đăng nhập"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txt_login_quenmatkhau"
+        android:layout_width="123dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_login"
+        android:layout_alignEnd="@+id/btn_login"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="-1dp"
+        android:layout_marginBottom="-75dp"
+        android:layout_toEndOf="@+id/txt_login_dangki"
+        android:text="Quên mật khẩu"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/txt_login_dangki"
+        android:layout_width="157dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_login"
+        android:layout_alignStart="@+id/btn_login"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="54dp"
+        android:layout_marginBottom="-75dp"
+        android:text="Bạn chưa có tài khoản?"
+        android:textSize="15sp" />
+
+
+</RelativeLayout>
