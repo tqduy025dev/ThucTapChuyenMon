@@ -13,11 +13,14 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/windowBackground">
+            android:paddingEnd="17dp"
+            android:background="@color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:background="@drawable/boder_search">
 
                 <ImageView
                     android:layout_width="wrap_content"

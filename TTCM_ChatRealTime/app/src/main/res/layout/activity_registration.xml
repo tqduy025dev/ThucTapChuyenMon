@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,10 +7,10 @@
 
 
     <ImageView
-        android:id="@+id/img_login"
+        android:id="@+id/img_signUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/txt_login_username"
+        android:layout_above="@+id/txt_singUp_userName"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -26,9 +25,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/txt_login_username"
-        android:layout_alignStart="@+id/img_login"
-        android:layout_alignEnd="@+id/img_login"
+        android:layout_above="@+id/txt_singUp_userName"
+        android:layout_alignStart="@+id/img_signUp"
+        android:layout_alignEnd="@+id/img_signUp"
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="73dp"
@@ -42,17 +41,15 @@
 
 
     <EditText
-        android:id="@+id/txt_login_username"
+        android:id="@+id/txt_singUp_userName"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_above="@+id/txt_login_password"
-        android:layout_alignStart="@+id/txt_login_password"
-        android:layout_alignEnd="@+id/txt_login_password"
+        android:layout_above="@+id/txt_singUp_passWord"
+        android:layout_alignStart="@+id/txt_singUp_passWord"
+        android:layout_alignEnd="@+id/txt_singUp_passWord"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
         android:layout_marginBottom="15dp"
-        android:background="@drawable/black_boder"
+        android:background="@drawable/boder_back"
         android:hint="Tên đăng nhập"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
@@ -61,16 +58,16 @@
 
 
     <EditText
-        android:id="@+id/txt_login_password"
+        android:id="@+id/txt_singUp_passWord"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_above="@+id/txt_login_confimPass"
-        android:layout_alignStart="@+id/txt_login_confimPass"
+        android:layout_above="@+id/txt_singUp_confimPass"
+        android:layout_alignStart="@+id/txt_singUp_confimPass"
         android:layout_alignLeft="@+id/btn_login"
-        android:layout_alignEnd="@+id/txt_login_confimPass"
+        android:layout_alignEnd="@+id/txt_singUp_confimPass"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
-        android:background="@drawable/black_boder"
+        android:background="@drawable/boder_back"
         android:hint="Mật khẩu"
         android:inputType="textPassword"
         android:paddingLeft="15dp"
@@ -79,15 +76,15 @@
 
 
     <EditText
-        android:id="@+id/txt_login_confimPass"
+        android:id="@+id/txt_singUp_confimPass"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_above="@+id/txt_login_sdt"
-        android:layout_alignStart="@+id/txt_login_sdt"
-        android:layout_alignEnd="@+id/txt_login_sdt"
+        android:layout_above="@+id/txt_singUp_sdt"
+        android:layout_alignStart="@+id/txt_singUp_sdt"
+        android:layout_alignEnd="@+id/txt_singUp_sdt"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
-        android:background="@drawable/black_boder"
+        android:background="@drawable/boder_back"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:textColor="@android:color/background_dark"
@@ -95,43 +92,43 @@
         android:textSize="20dp" />
 
     <EditText
-        android:id="@+id/txt_login_sdt"
+        android:id="@+id/txt_singUp_sdt"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_above="@+id/btn_login"
-        android:layout_alignStart="@+id/btn_login"
-        android:layout_alignEnd="@+id/btn_login"
+        android:layout_above="@+id/btn_signUp"
+        android:layout_alignStart="@+id/btn_signUp"
+        android:layout_alignEnd="@+id/btn_signUp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="38dp"
-        android:background="@drawable/black_boder"
+        android:background="@drawable/boder_back"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:textColor="@android:color/background_dark"
         android:hint="Số điện thoại"
         android:textSize="20dp" />
 
+
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_login"
+        android:id="@+id/btn_signUp"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginEnd="56dp"
-        android:layout_marginBottom="178dp"
-        android:background="@drawable/while_packground"
+        android:layout_marginEnd="53dp"
+        android:layout_marginBottom="176dp"
+        android:background="@drawable/packground_while"
         android:text="Đăng kí"
         android:textColor="#000000"
         android:textSize="20dp"
         android:textStyle="bold" />
 
-
     <LinearLayout
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/btn_login"
-        android:layout_alignTop="@+id/btn_login"
-        android:layout_alignEnd="@+id/btn_login"
+        android:layout_alignStart="@+id/btn_signUp"
+        android:layout_alignTop="@+id/btn_signUp"
+        android:layout_alignEnd="@+id/btn_signUp"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="8dp"
         android:gravity="center"
@@ -142,7 +139,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
-                android:id="@+id/txt_login_dangki"
+                android:id="@+id/tv_signUp_trovedangnhap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
@@ -150,7 +147,7 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/txt_login_quenmatkhau"
+                android:id="@+id/tv_signUp_quenmatkhau"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"

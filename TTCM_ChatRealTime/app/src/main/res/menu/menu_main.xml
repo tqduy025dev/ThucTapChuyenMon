@@ -14,8 +14,8 @@
         app:showAsAction="always"
         android:title="" />
     <item
-        android:id="@+id/menu_post"
-        android:icon="@drawable/ic_add_box"
+        android:id="@+id/menu_notification"
+        android:icon="@drawable/ic_favorite"
         app:showAsAction="always"
         android:title="" />
     <item

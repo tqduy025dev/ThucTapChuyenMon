@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "947277636006",
+    "project_id": "chatrealtimeandroid",
+    "storage_bucket": "chatrealtimeandroid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947277636006:android:0d3e1bc2459babe0b6af67",
+        "android_client_info": {
+          "package_name": "com.tranquangduy.ttcm_chatrealtime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "947277636006-4cl7ta4bk1eufqvb43nal42qnd87241r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyzq1g-4uYm_6KZmhqmu0y7RLhrzM5ezI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "947277636006-4cl7ta4bk1eufqvb43nal42qnd87241r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
