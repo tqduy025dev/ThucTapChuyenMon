@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tranquangduy.adapter.UserAdapter;
 import com.tranquangduy.model.User;
+import com.tranquangduy.ttcm_chatrealtime.MainActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class FragmentSearch extends Fragment {
     RecyclerView recyclerView;
-    UserAdapter adapter;
+    UserAdapter userAdapter;
     List<User> listUser;
 
 
@@ -30,7 +31,7 @@ public class FragmentSearch extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
-        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerViewUser);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -42,8 +43,8 @@ public class FragmentSearch extends Fragment {
 
 
 
-        adapter = new UserAdapter(getContext(), listUser, true);
-        recyclerView.setAdapter(adapter);
+        userAdapter = new UserAdapter(getContext(), listUser, false);
+        recyclerView.setAdapter(userAdapter);
 
 
 

@@ -10,7 +10,7 @@
         android:id="@+id/img_signUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/txt_singUp_userName"
+        android:layout_above="@+id/txt_signUp_userName"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -25,7 +25,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/txt_singUp_userName"
+        android:layout_above="@+id/txt_signUp_userName"
         android:layout_alignStart="@+id/img_signUp"
         android:layout_alignEnd="@+id/img_signUp"
         android:layout_alignParentStart="true"
@@ -41,12 +41,12 @@
 
 
     <EditText
-        android:id="@+id/txt_singUp_userName"
+        android:id="@+id/txt_signUp_userName"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_above="@+id/txt_singUp_passWord"
-        android:layout_alignStart="@+id/txt_singUp_passWord"
-        android:layout_alignEnd="@+id/txt_singUp_passWord"
+        android:layout_above="@+id/txt_signUp_passWord"
+        android:layout_alignStart="@+id/txt_signUp_passWord"
+        android:layout_alignEnd="@+id/txt_signUp_passWord"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:background="@drawable/boder_back"
@@ -58,13 +58,13 @@
 
 
     <EditText
-        android:id="@+id/txt_singUp_passWord"
+        android:id="@+id/txt_signUp_passWord"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_above="@+id/txt_singUp_confimPass"
-        android:layout_alignStart="@+id/txt_singUp_confimPass"
+        android:layout_above="@+id/txt_signUp_confimPass"
+        android:layout_alignStart="@+id/txt_signUp_confimPass"
         android:layout_alignLeft="@+id/btn_login"
-        android:layout_alignEnd="@+id/txt_singUp_confimPass"
+        android:layout_alignEnd="@+id/txt_signUp_confimPass"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:background="@drawable/boder_back"
@@ -76,12 +76,12 @@
 
 
     <EditText
-        android:id="@+id/txt_singUp_confimPass"
+        android:id="@+id/txt_signUp_confimPass"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_above="@+id/txt_singUp_sdt"
-        android:layout_alignStart="@+id/txt_singUp_sdt"
-        android:layout_alignEnd="@+id/txt_singUp_sdt"
+        android:layout_above="@+id/txt_signUp_sdt"
+        android:layout_alignStart="@+id/txt_signUp_sdt"
+        android:layout_alignEnd="@+id/txt_signUp_sdt"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:background="@drawable/boder_back"
@@ -92,7 +92,7 @@
         android:textSize="20dp" />
 
     <EditText
-        android:id="@+id/txt_singUp_sdt"
+        android:id="@+id/txt_signUp_sdt"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_above="@+id/btn_signUp"

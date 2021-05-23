@@ -12,9 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_weight="1.5">
         <ImageView
-            android:id="@+id/imgItem_message_avatar"
+            android:id="@+id/imgItem_notification_avatar"
             android:layout_width="match_parent"
-            android:layout_height="50dp" />
+            android:layout_height="50dp"/>
+
     </LinearLayout>
 
 
@@ -31,14 +32,14 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/txtItem_message_userName"
+                android:id="@+id/txtItem_notification_userName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/txtItem_message_content"
+                android:id="@+id/txtItem_notification_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
@@ -51,15 +52,12 @@
         android:layout_width="0dp"
         android:layout_weight="1.5"
         android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/txtItem_message_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="time" />
-    </LinearLayout>
 
+        <ImageView
+            android:id="@+id/imgItem_notification_post"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+    </LinearLayout>
 
 
 </LinearLayout>
