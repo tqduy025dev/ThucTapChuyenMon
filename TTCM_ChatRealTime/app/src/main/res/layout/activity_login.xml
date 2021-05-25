@@ -6,31 +6,16 @@
     tools:context=".LoginActivity">
 
 
-    <ImageView
-        android:id="@+id/img_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/txt_login_userName"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="22dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginBottom="71dp"
-        android:src="@drawable/logo" />
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/txt_login_userName"
-        android:layout_alignStart="@+id/img_login"
-        android:layout_alignEnd="@+id/img_login"
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="77dp"
+        android:layout_marginStart="53dp"
         android:layout_marginTop="52dp"
         android:layout_marginEnd="53dp"
-        android:layout_marginBottom="71dp"
+        android:layout_marginBottom="73dp"
         android:gravity="center"
         android:text="Mini Chat"
         android:textSize="35dp"
@@ -47,7 +32,7 @@
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:textColor="@android:color/background_dark"
-        android:hint="Tên đăng nhập"
+        android:hint="Email"
         android:textSize="20dp" />
 
     <EditText
@@ -74,7 +59,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginEnd="51dp"
-        android:layout_marginBottom="169dp"
+        android:layout_marginBottom="162dp"
         android:background="@drawable/packground_while"
         android:text="Đăng nhập"
         android:textColor="#000000"

@@ -12,7 +12,7 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tranquangduy.fragments.FragmentHome;
-import com.tranquangduy.fragments.FragmentMenu;
+import com.tranquangduy.fragments.FragmentProfile;
 import com.tranquangduy.fragments.FragmentMessage;
 import com.tranquangduy.fragments.FragmentNotification;
 import com.tranquangduy.fragments.FragmentSearch;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedfragment = new FragmentSearch();
                     break;
                 case R.id.menu:
-                    selectedfragment = new FragmentMenu();
+                    selectedfragment = new FragmentProfile();
                     break;
                 case R.id.menu_notification:
                     selectedfragment = new FragmentNotification();

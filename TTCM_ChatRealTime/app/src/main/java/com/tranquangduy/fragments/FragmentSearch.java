@@ -36,10 +36,10 @@ public class FragmentSearch extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         listUser = new ArrayList<>();
-        listUser.add(new User("1","2","3","4","5","6"));
-        listUser.add(new User("2","3","4","5","6","7"));
-        listUser.add(new User("3","4","5","6","7","8"));
-        listUser.add(new User("4","5","6","7","8","9"));
+        listUser.add(new User("1","2","3","00","4","5"));
+        listUser.add(new User("2","3","4","00","5","6"));
+        listUser.add(new User("3","4","5","00","6","7"));
+        listUser.add(new User("4","5","6","00","7","8"));
 
 
 

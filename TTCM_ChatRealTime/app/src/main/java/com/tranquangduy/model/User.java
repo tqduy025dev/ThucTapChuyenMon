@@ -4,21 +4,20 @@ public class User {
     private String id;
     private String userName;
     private String fullName;
-    private String mailAddress;
+    private String email;
     private String imageUrl;
     private String bio;
 
+    public User() {
+    }
 
-    public User(String id, String userName, String fullName, String mailAddress, String imageUrl, String bio) {
+    public User(String id, String userName, String fullName, String email, String imageUrl, String bio) {
         this.id = id;
         this.userName = userName;
         this.fullName = fullName;
-        this.mailAddress = mailAddress;
+        this.email = email;
         this.imageUrl = imageUrl;
         this.bio = bio;
-    }
-
-    public User(){
     }
 
 
@@ -46,12 +45,12 @@ public class User {
         this.fullName = fullName;
     }
 
-    public String getMailAddress() {
-        return mailAddress;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMailAddress(String mailAddress) {
-        this.mailAddress = mailAddress;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getImageUrl() {
