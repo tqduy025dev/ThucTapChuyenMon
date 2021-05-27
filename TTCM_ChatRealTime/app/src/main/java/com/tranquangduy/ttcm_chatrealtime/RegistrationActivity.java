@@ -66,35 +66,35 @@ public class RegistrationActivity extends AppCompatActivity {
                 String str_confimPass = txtConfimPass.getText().toString();
 
 
-                txtUserName.setBackgroundResource(R.drawable.boder_back);
-                txtFullName.setBackgroundResource(R.drawable.boder_back);
-                txtEmail.setBackgroundResource(R.drawable.boder_back);
-                txtPassWord.setBackgroundResource(R.drawable.boder_back);
-                txtConfimPass.setBackgroundResource(R.drawable.boder_back);
+                txtUserName.setBackgroundResource(R.drawable.boder_while);
+                txtFullName.setBackgroundResource(R.drawable.boder_while);
+                txtEmail.setBackgroundResource(R.drawable.boder_while);
+                txtPassWord.setBackgroundResource(R.drawable.boder_while);
+                txtConfimPass.setBackgroundResource(R.drawable.boder_while);
 
                 if (TextUtils.isEmpty(str_fullName)) {
                     txtFullName.setBackgroundResource(R.drawable.boder_red);
                     Toast.makeText(RegistrationActivity.this, "Tên đăng nhập không được trống!", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(str_userName)) {
-                    txtFullName.setBackgroundResource(R.drawable.boder_back);
+                    txtFullName.setBackgroundResource(R.drawable.boder_while);
                     txtUserName.setBackgroundResource(R.drawable.boder_red);
                     Toast.makeText(RegistrationActivity.this, "Họ tên không được trống!", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(str_email)) {
-                    txtFullName.setBackgroundResource(R.drawable.boder_back);
-                    txtUserName.setBackgroundResource(R.drawable.boder_back);
+                    txtFullName.setBackgroundResource(R.drawable.boder_while);
+                    txtUserName.setBackgroundResource(R.drawable.boder_while);
                     txtEmail.setBackgroundResource(R.drawable.boder_red);
                     Toast.makeText(RegistrationActivity.this, "Email không được trống!", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(str_passWord) || str_passWord.length() < 6) {
-                    txtFullName.setBackgroundResource(R.drawable.boder_back);
-                    txtUserName.setBackgroundResource(R.drawable.boder_back);
-                    txtEmail.setBackgroundResource(R.drawable.boder_back);
+                    txtFullName.setBackgroundResource(R.drawable.boder_while);
+                    txtUserName.setBackgroundResource(R.drawable.boder_while);
+                    txtEmail.setBackgroundResource(R.drawable.boder_while);
                     txtPassWord.setBackgroundResource(R.drawable.boder_red);
                     Toast.makeText(RegistrationActivity.this, "Mật khẩu không được trống và có tối thiểu 6 kí tự!", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(str_confimPass) || !str_confimPass.equals(str_passWord)) {
-                    txtFullName.setBackgroundResource(R.drawable.boder_back);
-                    txtUserName.setBackgroundResource(R.drawable.boder_back);
-                    txtEmail.setBackgroundResource(R.drawable.boder_back);
-                    txtPassWord.setBackgroundResource(R.drawable.boder_back);
+                    txtFullName.setBackgroundResource(R.drawable.boder_while);
+                    txtUserName.setBackgroundResource(R.drawable.boder_while);
+                    txtEmail.setBackgroundResource(R.drawable.boder_while);
+                    txtPassWord.setBackgroundResource(R.drawable.boder_while);
                     txtConfimPass.setBackgroundResource(R.drawable.boder_red);
                     Toast.makeText(RegistrationActivity.this, "Xác nhận mật khẩu không khớp!", Toast.LENGTH_SHORT).show();
                 } else {

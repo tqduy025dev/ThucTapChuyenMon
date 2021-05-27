@@ -18,23 +18,42 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="3dp"
-                android:background="@drawable/boder_search">
-
-                <ImageView
-                    android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/linearSearch"
+                    android:layout_width="320dp"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_search" />
+                    android:padding="3dp"
+                    android:background="@drawable/boder_search">
 
-                <EditText
-                    android:id="@+id/search_bar"
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_search" />
+
+                    <EditText
+                        android:id="@+id/search_message"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@android:color/transparent"
+                        android:hint="Search..." />
+                </LinearLayout>
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:background="@android:color/transparent"
-                    android:hint="Search..." />
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/img_addRoom"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:src="@drawable/ic_add_mess" />
+                </RelativeLayout>
             </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>

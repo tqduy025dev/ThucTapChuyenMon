@@ -28,7 +28,7 @@
                     android:src="@drawable/ic_search" />
 
                 <EditText
-                    android:id="@+id/search_bar"
+                    android:id="@+id/txt_search_user"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -46,6 +46,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/bar" />
+    <TextView
+        android:id="@+id/hhhhh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@id/recyclerViewUser"/>
 
 
 </RelativeLayout>

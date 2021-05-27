@@ -3,16 +3,25 @@ package com.tranquangduy.model;
 public class Message {
     private String content;
     private long time;
-    private boolean seen;
     private String from;
+    private String imgURL;
 
-    public Message(String content, long time, boolean seen, String from) {
+    public Message(){}
+
+    public Message(String content, long time, String userID, String imgURL) {
         this.content = content;
         this.time = time;
-        this.seen = seen;
-        this.from = from;
+        this.from = userID;
+        this.imgURL = imgURL;
     }
 
+    public String getImgURL() {
+        return imgURL;
+    }
+
+    public void setImgURL(String imgURL) {
+        this.imgURL = imgURL;
+    }
 
     public String getContent() {
         return content;
@@ -30,12 +39,12 @@ public class Message {
         this.time = time;
     }
 
-    public boolean isSeen() {
-        return seen;
+    public String getUserID() {
+        return from;
     }
 
-    public void setSeen(boolean seen) {
-        this.seen = seen;
+    public void setUserID(String userID) {
+        this.from = userID;
     }
 
     public String getFrom() {

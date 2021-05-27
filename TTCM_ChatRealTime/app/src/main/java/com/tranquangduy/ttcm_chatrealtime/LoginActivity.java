@@ -26,10 +26,12 @@ public class LoginActivity extends AppCompatActivity {
     EditText txtPassWord;
     Button btnLogin;
     TextView tvSignUp;
+    ProgressDialog progressDialog;
+
 
     private FirebaseAuth mAuth;
-    Intent intent = null;
-    ProgressDialog progressDialog;
+    private Intent intent = null;
+
 
 
     @Override
@@ -51,8 +53,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String str_email = txtUserName.getText().toString().trim();
                 String str_password = txtPassWord.getText().toString();
-                txtUserName.setBackgroundResource(R.drawable.boder_back);
-                txtPassWord.setBackgroundResource(R.drawable.boder_back);
+                txtUserName.setBackgroundResource(R.drawable.boder_while);
+                txtPassWord.setBackgroundResource(R.drawable.boder_while);
                 if(TextUtils.isEmpty(str_email)){
                     txtUserName.setBackgroundResource(R.drawable.boder_red);
                     Toast.makeText(LoginActivity.this, "Không được để trống Email!", Toast.LENGTH_SHORT).show();

@@ -1,10 +1,18 @@
 package com.tranquangduy.fragments;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,51 +20,144 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.adapter.MessageAdapter;
 import com.tranquangduy.model.Message;
+import com.tranquangduy.ttcm_chatrealtime.MessageActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentMessage extends Fragment {
+public class FragmentMessage extends Fragment implements OnItemClickRecycleView {
+    EditText edtSearch;
+    ImageView imgAddRoom;
     RecyclerView recyclerView;
     List<Message> listMessage;
     MessageAdapter messageAdapter;
+
+    private FirebaseUser firebaseUser;
+    private DatabaseReference reference;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
 
-        recyclerView = view.findViewById(R.id.recyclerViewMessage);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        listMessage = new ArrayList<>();
-        listMessage.add(new Message("Content",1000,true,"Duy"));
-        listMessage.add(new Message("Content",1000,true,"Hai"));
-        listMessage.add(new Message("Content",1000,true,"Long"));
-        listMessage.add(new Message("Content",1000,true,"Huy"));
-        listMessage.add(new Message("Content",1000,true,"Hoang"));
-        listMessage.add(new Message("Content",1000,true,"Dương Uyên"));
-
-
-        messageAdapter = new MessageAdapter(getContext(),listMessage,true);
-        recyclerView.setAdapter(messageAdapter);
-
-
-
-
-
-
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        linkView(view);
+        getData();
+        addEvent();
 
         return view;
-
     }
 
 
 
+    private void addEvent() {
+        edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // xử lý tìm kiếm :V
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
 
+        imgAddRoom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDialogAddRoom();
+
+
+            }
+        });
+    }
+
+    private void getData() {
+        reference = FirebaseDatabase.getInstance().getReference("Chat");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (getContext() == null){
+                    return;
+                }
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    listMessage.add(dataSnapshot.getValue(Message.class));
+                }
+
+                messageAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    private void linkView(View view) {
+        edtSearch = view.findViewById(R.id.search_message);
+        imgAddRoom = view.findViewById(R.id.img_addRoom);
+
+        listMessage = new ArrayList<>();
+        recyclerView = view.findViewById(R.id.recyclerViewMessage);
+        messageAdapter = new MessageAdapter(getContext(),listMessage,true, this);
+        recyclerView.setAdapter(messageAdapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+    }
+
+    private void openDialogAddRoom(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Tên Phòng :");
+
+        final EditText inputNameRoom = new EditText(getContext());
+
+        builder.setView(inputNameRoom);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+//
+
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
+
+    @Override
+    public void onItemClick(int position) {
+        Intent intent = new Intent(getContext(), MessageActivity.class);
+        Message message = listMessage.get(position);
+        intent.putExtra("object_message", (Serializable) message);
+
+        startActivity(intent);
+
+
+        Toast.makeText(getContext(), "onClick", Toast.LENGTH_SHORT).show();
+    }
 }

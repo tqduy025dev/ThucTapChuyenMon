@@ -32,7 +32,6 @@ public class FragmentProfile extends Fragment {
     TextView txtUserName, txtBio, txtBarProfile;
 
     private FirebaseAuth mAuth;
-
     private FirebaseUser firebaseUser;
 
     @Nullable
@@ -92,8 +91,8 @@ public class FragmentProfile extends Fragment {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuth = FirebaseAuth.getInstance();
-                mAuth.signOut();
+//                mAuth = FirebaseAuth.getInstance();
+//                mAuth.signOut();
             }
         });
     }

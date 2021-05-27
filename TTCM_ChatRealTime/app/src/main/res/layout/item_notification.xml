@@ -8,13 +8,13 @@
     android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1.5">
-        <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgItem_notification_avatar"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"/>
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
 
     </LinearLayout>
 
@@ -23,19 +23,20 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_weight="7"
+        android:layout_weight="8"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="7dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/txtItem_notification_userName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15dp"
+                android:textSize="17dp"
                 android:textStyle="bold" />
 
             <TextView
@@ -50,7 +51,7 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_weight="1.5"
+        android:layout_weight="2"
         android:layout_height="match_parent">
 
         <ImageView

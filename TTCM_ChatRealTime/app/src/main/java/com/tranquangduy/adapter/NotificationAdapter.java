@@ -35,7 +35,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull NotificationAdapter.NotiViewHolder holder, int position) {
-        holder.imgAvt.setImageResource(R.drawable.ic_add_box);
+        holder.imgAvt.setImageResource(R.color.black);
         holder.imgPost.setImageResource(R.drawable.ic_add);
         holder.userName.setText(mNotifications.get(position).getUserid());
         holder.content.setText(mNotifications.get(position).getText());
