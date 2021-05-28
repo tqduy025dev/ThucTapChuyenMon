@@ -50,7 +50,7 @@ public class RegistrationActivity extends AppCompatActivity {
         tvDacoTK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
+                finish();
             }
         });
 

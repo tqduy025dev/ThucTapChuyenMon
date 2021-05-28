@@ -5,9 +5,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -30,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.adapter.MessageAdapter;
 import com.tranquangduy.model.Message;
 import com.tranquangduy.ttcm_chatrealtime.MessageActivity;
+import com.tranquangduy.ttcm_chatrealtime.NewChatActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.io.Serializable;
@@ -38,12 +41,11 @@ import java.util.List;
 
 public class FragmentMessage extends Fragment implements OnItemClickRecycleView {
     EditText edtSearch;
-    ImageView imgAddRoom;
+    ImageView imgAddChat;
     RecyclerView recyclerView;
     List<Message> listMessage;
     MessageAdapter messageAdapter;
 
-    private FirebaseUser firebaseUser;
     private DatabaseReference reference;
 
     @Nullable
@@ -51,9 +53,9 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
         linkView(view);
-        getData();
+//        getData();
         addEvent();
 
         return view;
@@ -77,13 +79,17 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
             }
         });
 
+        // bàn phím tự động bật lên vào edit text khi chạy activity
+        edtSearch.requestFocus();
+        edtSearch.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN , 0, 0, 0));
+        edtSearch.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP , 0, 0, 0));
 
-        imgAddRoom.setOnClickListener(new View.OnClickListener() {
+
+        imgAddChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openDialogAddRoom();
-
-
+                Intent intent = new Intent(getContext(), NewChatActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -111,52 +117,27 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
     private void linkView(View view) {
         edtSearch = view.findViewById(R.id.search_message);
-        imgAddRoom = view.findViewById(R.id.img_addRoom);
+        imgAddChat = view.findViewById(R.id.img_addRoom);
 
         listMessage = new ArrayList<>();
-        recyclerView = view.findViewById(R.id.recyclerViewMessage);
-        messageAdapter = new MessageAdapter(getContext(),listMessage,true, this);
-        recyclerView.setAdapter(messageAdapter);
+        recyclerView = view.findViewById(R.id.recyclerView_MessageUser);
+
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(messageAdapter);
 
     }
 
-    private void openDialogAddRoom(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Tên Phòng :");
 
-        final EditText inputNameRoom = new EditText(getContext());
-
-        builder.setView(inputNameRoom);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-//
-
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-
-    }
 
 
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(getContext(), MessageActivity.class);
         Message message = listMessage.get(position);
-        intent.putExtra("object_message", (Serializable) message);
+        intent.putExtra("object_message",  message);
 
         startActivity(intent);
-
 
         Toast.makeText(getContext(), "onClick", Toast.LENGTH_SHORT).show();
     }

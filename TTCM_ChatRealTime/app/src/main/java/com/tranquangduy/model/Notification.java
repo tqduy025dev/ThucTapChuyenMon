@@ -4,7 +4,9 @@ public class Notification {
     private String userid;
     private String text;
     private String postid;
-    private boolean ispost;
+    private Boolean ispost;
+
+    public Notification(){}
 
     public Notification(String userid, String text, String postid, boolean ispost) {
         this.userid = userid;
@@ -37,11 +39,11 @@ public class Notification {
         this.postid = postid;
     }
 
-    public boolean isIspost() {
+    public Boolean getIspost() {
         return ispost;
     }
 
-    public void setIspost(boolean ispost) {
+    public void setIspost(Boolean ispost) {
         this.ispost = ispost;
     }
 }

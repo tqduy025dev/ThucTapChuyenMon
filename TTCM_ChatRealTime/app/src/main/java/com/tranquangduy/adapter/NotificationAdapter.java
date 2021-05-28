@@ -10,7 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.model.Notification;
+import com.tranquangduy.model.Post;
+import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.List;
@@ -35,11 +43,58 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull NotificationAdapter.NotiViewHolder holder, int position) {
-        holder.imgAvt.setImageResource(R.color.black);
-        holder.imgPost.setImageResource(R.drawable.ic_add);
-        holder.userName.setText(mNotifications.get(position).getUserid());
-        holder.content.setText(mNotifications.get(position).getText());
+        Notification notification = mNotifications.get(position);
+        holder.content.setText(notification.getText());
 
+        getUserInfo(holder.imgAvt, holder.userName, notification.getUserid());
+
+
+        if (notification.getIspost()) {
+            holder.imgPost.setVisibility(View.VISIBLE);
+
+            getImgPost(holder.imgPost, notification.getPostid());
+        } else {
+            holder.imgPost.setVisibility(View.GONE);
+        }
+
+
+
+    }
+
+    private void getImgPost(final ImageView imgPost, String postID) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                .child("Posts").child(postID);
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Post post = dataSnapshot.getValue(Post.class);
+                Glide.with(mContext).load(post.getPostimage()).into(imgPost);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getUserInfo(final ImageView imgUser, final TextView userName, String userID ) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                .child("Users").child(userID);
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                Glide.with(mContext).load(user.getImageUrl()).into(imgUser);
+                userName.setText(user.getUserName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
     }
 

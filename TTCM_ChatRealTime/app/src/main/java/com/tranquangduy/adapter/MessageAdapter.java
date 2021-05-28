@@ -1,6 +1,7 @@
 package com.tranquangduy.adapter;
 
 import android.content.Context;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,40 +12,51 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.tranquangduy.fragments.OnItemClickRecycleView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.tranquangduy.model.Message;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 
 import java.util.List;
 
+
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder>{
+    public static final int MSG_TYPE_LEFT = 0;
+    public static final int MSG_TYPE_RIGHT = 1;
 
     private Context mContext;
     private List<Message> mMessage;
-    private boolean isFragment;
-    private OnItemClickRecycleView onItemClickRecycleView;
+    private String imgURL;
 
-    public MessageAdapter(Context mContext, List<Message> mMessage, boolean isFragment, OnItemClickRecycleView onItemClickRecycleView) {
+    FirebaseUser firebaseUser;
+
+    public MessageAdapter(Context mContext, List<Message> mMessage, String imgURL) {
         this.mContext = mContext;
         this.mMessage = mMessage;
-        this.isFragment = isFragment;
-        this.onItemClickRecycleView = onItemClickRecycleView;
+        this.imgURL = imgURL;
     }
 
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message,parent, false);
-        return new MessageViewHolder(view, onItemClickRecycleView);
+        if (viewType == MSG_TYPE_RIGHT) {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_chat_right, parent, false);
+            return new MessageAdapter.MessageViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_chat_left, parent, false);
+            return new MessageAdapter.MessageViewHolder(view);
+        }
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        Glide.with(mContext).load(mMessage.get(position).getImgURL()).into(holder.imgAvt);
-        holder.userName.setText(mMessage.get(position).getFrom());
-//        holder.content.setText(mMessage.get(position).getContent());
-        holder.time.setText(mMessage.get(position).getTime() + "");
+        Message msg = mMessage.get(position);
+        holder.txtShowMessage.setText(msg.getMessage());
+        Glide.with(mContext).load(R.drawable.ic_logout).into(holder.imgAvatar);
+
+
     }
 
     @Override
@@ -53,28 +65,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
 
-    public class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView imgAvt;
-        TextView userName;
-        TextView content;
-        TextView time;
-        OnItemClickRecycleView onItemClickRecycleViewHolder;
+    public class MessageViewHolder extends RecyclerView.ViewHolder {
+        TextView txtShowMessage;
+        ImageView imgAvatar;
 
-        public MessageViewHolder(@NonNull View itemView, OnItemClickRecycleView onClickListener) {
+        public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.onItemClickRecycleViewHolder = onClickListener; //set onlick item cho recycle view
-            itemView.setOnClickListener(this);
-
-            imgAvt = itemView.findViewById(R.id.imgItem_message_avatar);
-            userName = itemView.findViewById(R.id.txtItem_message_userName);
-            content = itemView.findViewById(R.id.txtItem_message_content);
-            time = itemView.findViewById(R.id.txtItem_message_time);
+            txtShowMessage = itemView.findViewById(R.id.txtItem_chat_messageContent);
+            imgAvatar = itemView.findViewById(R.id.imgItem_chat_avatar);
         }
+    }
 
-
-        @Override
-        public void onClick(View v) {
-            onItemClickRecycleViewHolder.onItemClick(getAdapterPosition());
+    @Override
+    public int getItemViewType(int position) {
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(mMessage.get(position).getSender().equals(firebaseUser.getUid())){
+            return MSG_TYPE_RIGHT;
+        }else {
+            return MSG_TYPE_LEFT;
         }
     }
 }

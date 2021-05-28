@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/img_back"
+                    android:id="@+id/img_message_back"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:layout_alignParentStart="true"
@@ -36,23 +36,25 @@
                     android:src="@drawable/ic_back" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/img_avtRoom"
+                    android:id="@+id/img_message_avtUser"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="21dp"
                     android:layout_marginTop="0dp"
-                    android:layout_toEndOf="@+id/img_back"
+                    android:layout_toEndOf="@+id/img_message_back"
                     android:src="@color/black" />
 
                 <TextView
-                    android:id="@+id/txt_roomName"
+                    android:id="@+id/txt_message_userName"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="7dp"
                     android:layout_marginTop="0dp"
-                    android:layout_toEndOf="@+id/img_avtRoom" />
+                    android:layout_toEndOf="@+id/img_message_avtUser" />
 
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
@@ -61,34 +63,42 @@
     <ScrollView
         android:id="@+id/scrollMess"
         android:layout_width="match_parent"
-        android:layout_height="627dp"
-        android:layout_below="@+id/bar">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linearSend"
+        android:layout_below="@+id/bar"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="-2dp"
+        android:layout_marginBottom="2dp">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycleView_message"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
 
     </ScrollView>
+
     <LinearLayout
+        android:id="@+id/linearSend"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:weightSum="10"
-        android:layout_below="@+id/scrollMess">
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
+        android:weightSum="10">
+
         <EditText
             android:id="@+id/edt_contentMessage"
-            android:layout_weight="9"
             android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_weight="9" />
+
         <Button
             android:id="@+id/btn_sendMessage"
-            android:layout_weight="1"
             android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:background="@drawable/ic_send"
-            android:layout_height="wrap_content"/>
-
-
+            android:layout_weight="1"
+            android:background="@drawable/ic_send" />
 
 
     </LinearLayout>

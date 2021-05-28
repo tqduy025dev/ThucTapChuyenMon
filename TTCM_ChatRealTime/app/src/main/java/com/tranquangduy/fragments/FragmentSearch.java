@@ -1,9 +1,11 @@
 package com.tranquangduy.fragments;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -33,14 +35,12 @@ import com.tranquangduy.ttcm_chatrealtime.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentSearch extends Fragment {
+public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
     RecyclerView recyclerView;
     EditText searchUser;
-    TextView textView;
     UserAdapter userAdapter;
     List<User> listUser = new ArrayList<>();
 
-    private FirebaseUser firebaseUser;
 
 
     @Nullable
@@ -48,30 +48,16 @@ public class FragmentSearch extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
-        textView = view.findViewById(R.id.hhhhh);
-        searchUser = view.findViewById(R.id.txt_search_user);
-        searchUser.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                searchUsers(s.toString().toLowerCase());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+        linkView(view);
+        getData();
+        addEvent();
 
 
-        recyclerView = view.findViewById(R.id.recyclerViewUser);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        return view;
+    }
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
+    private void getData() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
 
         reference.addValueEventListener(new ValueEventListener() {
@@ -90,11 +76,38 @@ public class FragmentSearch extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-        userAdapter = new UserAdapter(getContext(), listUser);
+        userAdapter = new UserAdapter(getContext(), listUser, true, this);
         recyclerView.setAdapter(userAdapter);
+    }
 
 
-        return view;
+    private void linkView(View view) {
+        searchUser = view.findViewById(R.id.txt_search_user);
+        recyclerView = view.findViewById(R.id.recyclerView_user);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    private void addEvent() {
+        // bàn phím tự động bật lên vào edit text khi chạy activity
+        searchUser.requestFocus();
+        searchUser.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN , 0, 0, 0));
+        searchUser.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP , 0, 0, 0));
+
+        searchUser.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchUsers(s.toString().toLowerCase());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 
 
@@ -117,11 +130,11 @@ public class FragmentSearch extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-
-        textView.setText(s);
-
     }
 
 
-
+    @Override
+    public void onItemClick(int position) {
+        // click vào item message
+    }
 }

@@ -1,57 +1,43 @@
 package com.tranquangduy.model;
 
-public class Message {
-    private String content;
-    private long time;
-    private String from;
-    private String imgURL;
+import java.io.Serializable;
 
-    public Message(){}
+public class Message implements Serializable {
+    private String message;
+    private String sender;
+    private String receiver;
 
-    public Message(String content, long time, String userID, String imgURL) {
-        this.content = content;
-        this.time = time;
-        this.from = userID;
-        this.imgURL = imgURL;
+
+    public Message() {
     }
 
-    public String getImgURL() {
-        return imgURL;
+    public Message(String message, String sender, String receiver) {
+        this.message = message;
+        this.sender = sender;
+        this.receiver = receiver;
     }
 
-    public void setImgURL(String imgURL) {
-        this.imgURL = imgURL;
+    public String getMessage() {
+        return message;
     }
 
-    public String getContent() {
-        return content;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public String getSender() {
+        return sender;
     }
 
-    public long getTime() {
-        return time;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public String getReceiver() {
+        return receiver;
     }
 
-    public String getUserID() {
-        return from;
-    }
-
-    public void setUserID(String userID) {
-        this.from = userID;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public void setFrom(String from) {
-        this.from = from;
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 }

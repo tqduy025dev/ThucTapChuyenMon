@@ -11,11 +11,19 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.adapter.NotificationAdapter;
 import com.tranquangduy.model.Notification;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FragmentNotification extends Fragment {
@@ -36,11 +44,28 @@ public class FragmentNotification extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         listNotification = new ArrayList<>();
-        listNotification.add(new Notification("1","oke man","1",true));
-        listNotification.add(new Notification("2","oke pro","2",true));
-        listNotification.add(new Notification("3","oke you","3",true));
-        listNotification.add(new Notification("4","oke mày","4",true));
-        listNotification.add(new Notification("5","oke cc","5",true));
+
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(firebaseUser.getUid());
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listNotification.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    listNotification.add(dataSnapshot.getValue(Notification.class));
+                }
+                Collections.reverse(listNotification);
+                notificationAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
 
         notificationAdapter = new NotificationAdapter(getContext(),listNotification);

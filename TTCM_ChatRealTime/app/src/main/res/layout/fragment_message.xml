@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content">
                 <LinearLayout
                     android:id="@+id/linearSearch"
-                    android:layout_width="320dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="3dp"
                     android:background="@drawable/boder_search">
@@ -40,20 +40,6 @@
                         android:background="@android:color/transparent"
                         android:hint="Search..." />
                 </LinearLayout>
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/img_addRoom"
-                        android:layout_width="40dp"
-                        android:layout_height="30dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginTop="0dp"
-                        android:layout_marginEnd="0dp"
-                        android:src="@drawable/ic_add_mess" />
-                </RelativeLayout>
             </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
@@ -62,11 +48,23 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewMessage"
+        android:id="@+id/recyclerView_MessageUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/bar" />
 
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_addRoom"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_new_message"
+        android:padding="13dp"
+        android:background="@drawable/background_circle_blue" />
 
 
 </RelativeLayout>

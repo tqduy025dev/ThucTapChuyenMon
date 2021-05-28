@@ -93,11 +93,10 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,"Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
                     intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
-                    finish();
+
                 }else {
-                    progressDialog.dismiss();
                     Toast.makeText(LoginActivity.this,"Sai email hoặc mật khẩu!" , Toast.LENGTH_SHORT).show();
                 }
             }

@@ -32,6 +32,8 @@
         android:background="@drawable/boder_while"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
+        android:maxLines="1"
+        android:inputType="textWebEmailAddress"
         android:textColor="@android:color/background_dark"
         android:hint="Email"
         android:textSize="20dp" />
@@ -50,6 +52,7 @@
         android:layout_marginBottom="142dp"
         android:background="@drawable/boder_while"
         android:hint="Mật khẩu"
+        android:maxLines="1"
         android:inputType="textPassword"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"

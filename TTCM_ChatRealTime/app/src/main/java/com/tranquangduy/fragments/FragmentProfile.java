@@ -1,6 +1,7 @@
 package com.tranquangduy.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.model.User;
+import com.tranquangduy.ttcm_chatrealtime.LoginActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 public class FragmentProfile extends Fragment {
@@ -42,8 +44,46 @@ public class FragmentProfile extends Fragment {
         linkView(view);
         addEvent();
         getUser();
+        getFollow();
 
         return view;
+
+    }
+
+    private void getFollow() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow").child(firebaseUser.getUid()).child("following");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (getContext() == null){
+                    return;
+                }
+                txtFollowing.setText(""+ snapshot.getChildrenCount());
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Follow").child(firebaseUser.getUid()).child("followers");
+        reference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (getContext() == null){
+                    return;
+                }
+                txtFollowers.setText(""+ snapshot.getChildrenCount());
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+
 
     }
 
@@ -91,8 +131,9 @@ public class FragmentProfile extends Fragment {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                mAuth = FirebaseAuth.getInstance();
-//                mAuth.signOut();
+                mAuth = FirebaseAuth.getInstance();
+                mAuth.signOut();
+                startActivity(new Intent(getContext(), LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }
         });
     }
