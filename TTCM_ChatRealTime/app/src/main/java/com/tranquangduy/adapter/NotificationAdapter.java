@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,8 +46,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(@NonNull NotificationAdapter.NotiViewHolder holder, int position) {
         Notification notification = mNotifications.get(position);
-        holder.content.setText(notification.getText());
 
+        holder.content.setText(notification.getText());
         getUserInfo(holder.imgAvt, holder.userName, notification.getUserid());
 
 
@@ -56,7 +58,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         } else {
             holder.imgPost.setVisibility(View.GONE);
         }
-
 
 
     }

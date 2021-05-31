@@ -76,7 +76,7 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-        userAdapter = new UserAdapter(getContext(), listUser, true, this);
+        userAdapter = new UserAdapter(getContext(), listUser, true, false, this);
         recyclerView.setAdapter(userAdapter);
     }
 
@@ -135,6 +135,6 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
 
     @Override
     public void onItemClick(int position) {
-        // click vào item message
+        // click vào item user
     }
 }

@@ -18,14 +18,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.tranquangduy.fragments.FragmentMessage;
 import com.tranquangduy.fragments.OnItemClickRecycleView;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,14 +31,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     private final Context mContext;
     private List<User> mUsers;
     private boolean isFragment;
+    private boolean isMessage;
     private OnItemClickRecycleView onItemClickRecycleView;
 
     private FirebaseUser firebaseUser;
 
-    public UserAdapter(Context mContext, List<User> mUsers, boolean isFragment, OnItemClickRecycleView onItemClickRecycleView) {
+    public UserAdapter(Context mContext, List<User> mUsers, boolean isFragment, boolean isMessage, OnItemClickRecycleView onItemClickRecycleView) {
         this.mContext = mContext;
         this.mUsers = mUsers;
         this.isFragment = isFragment;
+        this.isMessage = isMessage;
         this.onItemClickRecycleView = onItemClickRecycleView;
     }
 
@@ -55,21 +55,33 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull UserAdapter.UserViewHolder holder, int position) {
-        final User user = mUsers.get(position);
+        User user = mUsers.get(position);
 
-        Glide.with(mContext).load(mUsers.get(position).getImageUrl()).into(holder.imgViewUser);
-        holder.tvUserName.setText(mUsers.get(position).getUserName());
-        holder.tvFullName.setText(mUsers.get(position).getFullName());
+        Glide.with(mContext).load(user.getImageUrl()).into(holder.imgViewUser);
+        holder.tvUserName.setText(user.getUserName());
+        holder.tvFullName.setText(user.getFullName());
+
         if(isFragment){
             holder.btnFollow.setVisibility(View.VISIBLE);
         }else{
             holder.btnFollow.setVisibility(View.GONE);
         }
 
+        if(isMessage){
+            holder.tvFullName.setText(user.getLastMsg());
+            if(user.getId().equals(firebaseUser.getUid())){
+                String a = "Chỉ có bạn";
+                holder.tvUserName.setText(a);
+                holder.tvFullName.setText(user.getFullName());
+            }
+        }
+
         isFollowing(user.getId(), holder.btnFollow);
         if (user.getId().equals(firebaseUser.getUid())){
             holder.btnFollow.setVisibility(View.GONE);
         }
+
+
 
 
         holder.btnFollow.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +111,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public int getItemCount() {
         return mUsers.size();
     }
+
+//    public void filterList(ArrayList<User> filterList){
+//        mUsers = filterList;
+//        notifyDataSetChanged();
+//    }
+
+
 
     public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView imgViewUser;
@@ -136,8 +155,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     private void isFollowing(final String userid, final Button button){
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Follow").child(firebaseUser.getUid()).child("following");
         reference.addValueEventListener(new ValueEventListener() {

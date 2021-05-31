@@ -9,19 +9,20 @@ public class User implements Serializable {
     private String email;
     private String imageUrl;
     private String bio;
+    private String lastMsg;
 
     public User() {
     }
 
-    public User(String id, String userName, String fullName, String email, String imageUrl, String bio) {
+    public User(String id, String userName, String fullName, String email, String imageUrl, String bio, String lastMsg) {
         this.id = id;
         this.userName = userName;
         this.fullName = fullName;
         this.email = email;
         this.imageUrl = imageUrl;
         this.bio = bio;
+        this.lastMsg = lastMsg;
     }
-
 
     public String getId() {
         return id;
@@ -69,5 +70,13 @@ public class User implements Serializable {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public String getLastMsg() {
+        return lastMsg;
+    }
+
+    public void setLastMsg(String lastMsg) {
+        this.lastMsg = lastMsg;
     }
 }

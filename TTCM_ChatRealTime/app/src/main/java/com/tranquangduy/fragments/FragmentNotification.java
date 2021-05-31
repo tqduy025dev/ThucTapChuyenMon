@@ -67,7 +67,6 @@ public class FragmentNotification extends Fragment {
         });
 
 
-
         notificationAdapter = new NotificationAdapter(getContext(),listNotification);
         recyclerView.setAdapter(notificationAdapter);
 

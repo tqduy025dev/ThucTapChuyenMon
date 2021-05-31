@@ -2,6 +2,7 @@ package com.tranquangduy.adapter;
 
 import android.content.Context;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,10 @@ import com.tranquangduy.model.Message;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder>{
@@ -54,10 +58,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message msg = mMessage.get(position);
         holder.txtShowMessage.setText(msg.getMessage());
-        Glide.with(mContext).load(R.drawable.ic_logout).into(holder.imgAvatar);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(msg.getTime());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm", Locale.getDefault());
 
+        holder.txtTime.setText(dateFormat.format(calendar.getTime()));
+
+//        Glide.with(mContext).load(imgURL).into(holder.imgAvatar); // sự cố từ đây
 
     }
+
+
+
 
     @Override
     public int getItemCount() {
@@ -68,11 +80,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView txtShowMessage;
         ImageView imgAvatar;
+        TextView txtTime;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtShowMessage = itemView.findViewById(R.id.txtItem_chat_messageContent);
-            imgAvatar = itemView.findViewById(R.id.imgItem_chat_avatar);
+            txtShowMessage = (TextView) itemView.findViewById(R.id.txtItem_chat_messageContent);
+            imgAvatar =  (ImageView) itemView.findViewById(R.id.imgItem_chat_avatar);
+            txtTime = (TextView) itemView.findViewById(R.id.txtItem_chat_time);;
         }
     }
 

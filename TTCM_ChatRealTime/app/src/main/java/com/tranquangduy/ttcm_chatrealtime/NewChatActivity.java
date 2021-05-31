@@ -51,17 +51,12 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
         addEvent();
 
 
-
-
-
-
     }
 
     private void addEvent() {
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -110,7 +105,6 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
             }
         });
 
-
     }
 
     private void getData() {
@@ -119,6 +113,7 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listUser.clear();
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
                     listUser.add(dataSnapshot.getValue(User.class));
                 }
@@ -128,7 +123,7 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-        userAdapter = new UserAdapter(NewChatActivity.this, listUser,false, this);
+        userAdapter = new UserAdapter(NewChatActivity.this, listUser,false, false, this);
         recyclerViewUser.setAdapter(userAdapter);
 
     }
@@ -146,7 +141,7 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
     public void onItemClick(int position) {
         Intent intent = new Intent(NewChatActivity.this, MessageActivity.class);
         User user = listUser.get(position);
-        intent.putExtra("user_chat", user);
+        intent.putExtra("user_newChat", user);
         startActivity(intent);
 
     }

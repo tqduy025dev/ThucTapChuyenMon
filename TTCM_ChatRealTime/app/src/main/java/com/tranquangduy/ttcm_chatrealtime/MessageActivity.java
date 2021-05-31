@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +21,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.adapter.MessageAdapter;
 import com.tranquangduy.model.Message;
@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class MessageActivity extends AppCompatActivity {
     ImageView imgBack;
@@ -53,7 +54,6 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
-
         linkView();
         getData();
         addEvent();
@@ -73,9 +73,11 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String msg = editContentMessage.getText().toString();
-                if(!msg.equals("")){
+                if (!msg.equals("")) {
                     sendMessage(firebaseUser.getUid(), user.getId(), msg);
-                }else {
+                    addNotification(user.getId());
+                    editContentMessage.setText("");
+                } else {
                     Toast.makeText(MessageActivity.this, "Vui lòng nhập nội dung tin nhắn!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -91,49 +93,63 @@ public class MessageActivity extends AppCompatActivity {
         editContentMessage = findViewById(R.id.edt_contentMessage);
         recyclerViewMessage = findViewById(R.id.recycleView_message);
         recyclerViewMessage.setHasFixedSize(true);
-        recyclerViewMessage.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
+        recyclerViewMessage.setLayoutManager(new LinearLayoutManager(MessageActivity.this));
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     private void getData() {
         intent = getIntent();
-        user = (User) intent.getSerializableExtra("user_chat");
-        txtUserName.setText(user.getUserName());
-        Glide.with(this).load(user.getImageUrl()).into(imgAvt);
+        if (intent != null) {
+            user = (User) intent.getSerializableExtra("user_newChat");
+            if (user != null) {
+                txtUserName.setText(user.getUserName());
+                Glide.with(this).load(user.getImageUrl()).into(imgAvt);
 
-        readMessage(firebaseUser.getUid(),user.getId(), user.getImageUrl());
+                readMessage(firebaseUser.getUid(), user.getId(), user.getImageUrl());
+            } else {
+                user = (User) intent.getSerializableExtra("user_message");
+                txtUserName.setText(user.getUserName());
+                Glide.with(this).load(user.getImageUrl()).into(imgAvt);
+
+                readMessage(firebaseUser.getUid(), user.getId(), user.getImageUrl());
+            }
+        }
 
     }
 
     private void sendMessage(String sender, String receiver, String message) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
-        Map<String, Object> hasMap = new HashMap<>();
-        hasMap.put("sender", sender);
-        hasMap.put("receiver", receiver);
-        hasMap.put("message", message);
-        reference.child("Chats").push().setValue(hasMap);
+        Map<String, Object> hashMap = new HashMap<>();
+        hashMap.put("sender", sender);
+        hashMap.put("receiver", receiver);
+        hashMap.put("message", message);
+        hashMap.put("time", ServerValue.TIMESTAMP);
+        reference.child("Chats").push().setValue(hashMap);
+
+        reference.child("Users").child(sender).child("lastMsg").setValue(message);
+        reference.child("Users").child(receiver).child("lastMsg").setValue(message);
 
     }
 
-    private void readMessage(String myID, String userID, String imgURL){
+    private void readMessage(String myID, String userID, String imgURL) {
         reference = FirebaseDatabase.getInstance().getReference("Chats");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listMessage.clear();
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Message msg = dataSnapshot.getValue(Message.class);
-                    if(msg.getSender().equals(myID) && msg.getReceiver().equals(userID) ||
-                            msg.getSender().equals(userID) && msg.getReceiver().equals(myID)){
-                            listMessage.add(msg);
+                    if (msg.getSender().equals(myID) && msg.getReceiver().equals(userID) ||
+                            msg.getSender().equals(userID) && msg.getReceiver().equals(myID)) {
+                        listMessage.add(msg);
                     }
                 }
-
                 messageAdapter.notifyDataSetChanged();
-
+                if(listMessage.size() != 0){
+                    recyclerViewMessage.smoothScrollToPosition(listMessage.size() - 1);
+                }
             }
 
             @Override
@@ -143,6 +159,20 @@ public class MessageActivity extends AppCompatActivity {
 
         messageAdapter = new MessageAdapter(MessageActivity.this, listMessage, imgURL);
         recyclerViewMessage.setAdapter(messageAdapter);
+
+    }
+
+    private void addNotification(String userid) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
+
+        if(!userid.equals(firebaseUser.getUid())){
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("userid", firebaseUser.getUid());
+            hashMap.put("text", "đã gửi cho bạn 1 tin nhắn");
+            hashMap.put("postid", "");
+            hashMap.put("ispost", Boolean.FALSE);
+            reference.push().setValue(hashMap);
+        }
 
     }
 

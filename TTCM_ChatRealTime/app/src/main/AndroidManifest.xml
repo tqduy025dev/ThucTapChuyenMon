@@ -14,7 +14,8 @@
         <activity android:name=".NewChatActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
         <activity android:name=".MessageActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".RegistrationActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
