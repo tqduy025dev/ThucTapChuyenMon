@@ -9,5 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="chat_left">#F0F2F5</color>
     <color name="chat_right">#1771E6</color>
-
+    <color name="online">#22FB1A</color>
+    <color name="ofline">#7E7E7E</color>
 </resources>

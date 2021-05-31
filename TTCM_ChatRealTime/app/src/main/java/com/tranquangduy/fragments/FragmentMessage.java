@@ -77,17 +77,15 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                searchUsers(s.toString().toLowerCase());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-//                searchUsers(s.toString().toLowerCase());
+                searchUsers(s.toString().toLowerCase());
             }
         });
 
@@ -101,6 +99,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), NewChatActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
@@ -133,24 +132,14 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
     }
 
     private void searchUsers(String s){
-        Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("userName")
-                .startAt(s)
-                .endAt(s+"\uf8ff");
+        ArrayList<User> filterList = new ArrayList<>();
+        for(User user : mUser){
+            if(user.getUserName().toLowerCase().contains(s)){
+                filterList.add(user);
+            }
+        }
+        userAdapter.filertListUser(filterList);
 
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mUser.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    User user = snapshot.getValue(User.class);
-                    mUser.add(user);
-                }
-                userAdapter.notifyDataSetChanged();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
     }
 
 
@@ -177,7 +166,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
             }
         });
 
-        userAdapter = new UserAdapter(getContext(), mUser, false,true, this);
+        userAdapter = new UserAdapter(getContext(), mUser, false,true,true, this);
         recyclerView.setAdapter(userAdapter);
     }
 
@@ -197,6 +186,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(getContext(), MessageActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         User user = mUser.get(position);
         intent.putExtra("user_message", user);
         startActivity(intent);

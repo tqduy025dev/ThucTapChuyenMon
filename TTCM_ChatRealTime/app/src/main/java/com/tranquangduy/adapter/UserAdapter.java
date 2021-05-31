@@ -32,15 +32,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     private List<User> mUsers;
     private boolean isFragment;
     private boolean isMessage;
+    private boolean isStatus;
     private OnItemClickRecycleView onItemClickRecycleView;
 
     private FirebaseUser firebaseUser;
 
-    public UserAdapter(Context mContext, List<User> mUsers, boolean isFragment, boolean isMessage, OnItemClickRecycleView onItemClickRecycleView) {
+    public UserAdapter(Context mContext, List<User> mUsers, boolean isFragment,boolean isStatus, boolean isMessage, OnItemClickRecycleView onItemClickRecycleView) {
         this.mContext = mContext;
         this.mUsers = mUsers;
         this.isFragment = isFragment;
         this.isMessage = isMessage;
+        this.isStatus = isStatus;
         this.onItemClickRecycleView = onItemClickRecycleView;
     }
 
@@ -76,11 +78,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             }
         }
 
+        if(isStatus){
+            if(user.getStatus().equals("online")){
+                holder.imgStatus.setImageResource(R.drawable.ic_online);
+            }else {
+                holder.imgStatus.setImageResource(R.drawable.ic_offline);
+            }
+        }else {
+            holder.imgStatus.setVisibility(View.GONE);
+        }
+
         isFollowing(user.getId(), holder.btnFollow);
         if (user.getId().equals(firebaseUser.getUid())){
             holder.btnFollow.setVisibility(View.GONE);
         }
-
 
 
 
@@ -104,18 +115,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             }
         });
 
-
     }
+
 
     @Override
     public int getItemCount() {
         return mUsers.size();
     }
 
-//    public void filterList(ArrayList<User> filterList){
-//        mUsers = filterList;
-//        notifyDataSetChanged();
-//    }
+    public void filertListUser(ArrayList<User> filterList){
+        mUsers = filterList;
+        notifyDataSetChanged();
+    }
 
 
 
@@ -124,6 +135,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         TextView tvUserName;
         TextView tvFullName;
         Button btnFollow;
+        ImageView imgStatus;
         OnItemClickRecycleView onItemClickRecycleViewHolder;
 
         public UserViewHolder(@NonNull View itemView, OnItemClickRecycleView onItemClickRecycleViewHolder) {
@@ -131,6 +143,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             this.onItemClickRecycleViewHolder = onItemClickRecycleViewHolder;
             itemView.setOnClickListener(this);
 
+            imgStatus = itemView.findViewById(R.id.img_status);
             imgViewUser = itemView.findViewById(R.id.imgItem_user_avatar);
             tvUserName = itemView.findViewById(R.id.txtItem_user_userName);
             tvFullName = itemView.findViewById(R.id.txtItem_user_fullName);

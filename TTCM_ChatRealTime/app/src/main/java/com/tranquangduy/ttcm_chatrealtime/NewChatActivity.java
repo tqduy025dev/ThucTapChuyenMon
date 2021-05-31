@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +31,7 @@ import com.tranquangduy.fragments.OnItemClickRecycleView;
 import com.tranquangduy.model.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class NewChatActivity extends AppCompatActivity implements OnItemClickRecycleView {
@@ -39,13 +41,14 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
     List<User> listUser;
     UserAdapter userAdapter;
 
+    FirebaseUser firebaseUser;
+    DatabaseReference reference;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_chat);
-
         linkView();
         getData();
         addEvent();
@@ -123,7 +126,7 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-        userAdapter = new UserAdapter(NewChatActivity.this, listUser,false, false, this);
+        userAdapter = new UserAdapter(NewChatActivity.this, listUser,false, false,false, this);
         recyclerViewUser.setAdapter(userAdapter);
 
     }
@@ -133,6 +136,7 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
         edtSearch =  findViewById(R.id.txt_search_user_chat);
         recyclerViewUser  = findViewById(R.id.recycleView_user_chat);
 
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         recyclerViewUser.setHasFixedSize(true);
         recyclerViewUser.setLayoutManager(new LinearLayoutManager(NewChatActivity.this));
     }
@@ -140,9 +144,25 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(NewChatActivity.this, MessageActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         User user = listUser.get(position);
         intent.putExtra("user_newChat", user);
         startActivity(intent);
 
     }
+
+    private void status(String status){
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("status", status);
+        reference.updateChildren(map);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
 }

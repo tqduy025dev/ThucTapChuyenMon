@@ -64,7 +64,7 @@ public class MessageActivity extends AppCompatActivity {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+              finish();
             }
         });
 
@@ -173,7 +173,24 @@ public class MessageActivity extends AppCompatActivity {
             hashMap.put("ispost", Boolean.FALSE);
             reference.push().setValue(hashMap);
         }
+    }
+
+    private void status(String status){
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("status", status);
+        reference.updateChildren(map);
 
     }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+
 
 }

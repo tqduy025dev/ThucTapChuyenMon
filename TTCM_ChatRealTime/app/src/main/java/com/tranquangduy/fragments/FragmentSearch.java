@@ -41,7 +41,7 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
     UserAdapter userAdapter;
     List<User> listUser = new ArrayList<>();
 
-
+    FirebaseUser firebaseUser;
 
     @Nullable
     @Override
@@ -68,7 +68,8 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
                 }
                 listUser.clear();
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
-                    listUser.add(dataSnapshot.getValue(User.class));
+                    User user = dataSnapshot.getValue(User.class);
+                    listUser.add(user);
                 }
                 userAdapter.notifyDataSetChanged();
             }
@@ -76,7 +77,7 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-        userAdapter = new UserAdapter(getContext(), listUser, true, false, this);
+        userAdapter = new UserAdapter(getContext(), listUser, true,false, false, this);
         recyclerView.setAdapter(userAdapter);
     }
 
@@ -86,6 +87,8 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
         recyclerView = view.findViewById(R.id.recyclerView_user);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     private void addEvent() {
@@ -122,7 +125,9 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
                 listUser.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     User user = snapshot.getValue(User.class);
-                    listUser.add(user);
+                    if(!user.getId().equals(firebaseUser.getUid())){
+                        listUser.add(user);
+                    }
                 }
                 userAdapter.notifyDataSetChanged();
             }

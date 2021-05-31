@@ -9,19 +9,40 @@ public class User implements Serializable {
     private String email;
     private String imageUrl;
     private String bio;
+    private String webpage;
+    private String status;
     private String lastMsg;
+
 
     public User() {
     }
 
-    public User(String id, String userName, String fullName, String email, String imageUrl, String bio, String lastMsg) {
+    public User(String id, String userName, String fullName, String email, String imageUrl,String status, String bio,String webpage, String lastMsg) {
         this.id = id;
         this.userName = userName;
         this.fullName = fullName;
         this.email = email;
         this.imageUrl = imageUrl;
+        this.status =status;
+        this.webpage =webpage;
         this.bio = bio;
         this.lastMsg = lastMsg;
+    }
+
+    public String getWebpage() {
+        return webpage;
+    }
+
+    public void setWebpage(String webpage) {
+        this.webpage = webpage;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getId() {

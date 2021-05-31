@@ -40,10 +40,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         linkView();
         addEvent();
-
-
     }
-
 
 
     private void addEvent() {
@@ -126,7 +123,9 @@ public class RegistrationActivity extends AppCompatActivity {
                     map.put("email", email);
                     map.put("imageUrl", "https://firebasestorage.googleapis.com/v0/b/instagramtest-fcbef.appspot.com/o/placeholder.png?alt=media&token=b09b809d-a5f8-499b-9563-5252262e9a49");
                     map.put("bio", "");
+                    map.put("webpage", "");
                     map.put("lastMsg", "");
+                    map.put("status", "offline");
 
                     reference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
