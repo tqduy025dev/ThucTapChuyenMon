@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.fragments.OnItemClickRecycleView;
+import com.tranquangduy.model.Message;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
@@ -30,12 +31,13 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder>  {
     private final Context mContext;
     private List<User> mUsers;
-    private boolean isFragment;
-    private boolean isMessage;
-    private boolean isStatus;
+    private final boolean isFragment;
+    private final boolean isMessage;
+    private final boolean isStatus;
     private OnItemClickRecycleView onItemClickRecycleView;
 
     private FirebaseUser firebaseUser;
+    private String theLastMessage;
 
     public UserAdapter(Context mContext, List<User> mUsers, boolean isFragment,boolean isStatus, boolean isMessage, OnItemClickRecycleView onItemClickRecycleView) {
         this.mContext = mContext;
@@ -61,7 +63,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         Glide.with(mContext).load(user.getImageUrl()).into(holder.imgViewUser);
         holder.tvUserName.setText(user.getUserName());
-        holder.tvFullName.setText(user.getFullName());
 
         if(isFragment){
             holder.btnFollow.setVisibility(View.VISIBLE);
@@ -70,11 +71,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         }
 
         if(isMessage){
-            holder.tvFullName.setText(user.getLastMsg());
+            checkLastMessage(user.getId(),holder.tvFullName);
             if(user.getId().equals(firebaseUser.getUid())){
                 String a = "Chỉ có bạn";
                 holder.tvUserName.setText(a);
-                holder.tvFullName.setText(user.getFullName());
+                holder.imgStatus.setVisibility(View.GONE);
             }
         }
 
@@ -184,6 +185,43 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+
+    private void checkLastMessage(String userID, TextView txt_lastMessage){
+            theLastMessage = "deFauLt"; // cố tình sai format để tránh trường hợp người dùng gửi tin nhắn đúng chữ default
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        Message msg = dataSnapshot.getValue(Message.class);
+                        if(msg.getReceiver().equals(firebaseUser.getUid()) && msg.getSender().equals(userID) ||
+                                msg.getReceiver().equals(userID) && msg.getSender().equals(firebaseUser.getUid())){
+                                if(msg.getType().equals("image")){
+                                    theLastMessage = "imAGe";
+                                }else {
+                                    theLastMessage = msg.getMessage();
+                                }
+
+                        }
+                    }
+
+                    if(theLastMessage.equals("imAGe")){
+                        txt_lastMessage.setText("Đã gửi cho bạn 1 ảnh");
+                    }else if(!theLastMessage.equals("deFauLt")){
+                        txt_lastMessage.setText(theLastMessage);
+                    }else {
+                        txt_lastMessage.setText("");
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+
     }
 
 

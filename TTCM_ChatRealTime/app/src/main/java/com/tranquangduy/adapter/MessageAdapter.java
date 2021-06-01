@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,11 +45,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == MSG_TYPE_RIGHT) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.item_chat_right, parent, false);
+        if (viewType == MSG_TYPE_LEFT) {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_chat_left, parent, false);
             return new MessageAdapter.MessageViewHolder(view);
         } else {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.item_chat_left, parent, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_chat_right, parent, false);
             return new MessageAdapter.MessageViewHolder(view);
         }
 
@@ -57,14 +58,52 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message msg = mMessage.get(position);
-        holder.txtShowMessage.setText(msg.getMessage());
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(msg.getTime());
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm", Locale.getDefault());
 
-        holder.txtTime.setText(dateFormat.format(calendar.getTime()));
 
-//        Glide.with(mContext).load(imgURL).into(holder.imgAvatar); // sự cố từ đây
+
+        if(msg.getType().equals("text")){
+            holder.txtShowMessage.setVisibility(View.VISIBLE);
+            holder.txtShowMessage.setText(msg.getMessage());
+            holder.txtTime.setVisibility(View.VISIBLE);
+            holder.txtTime.setText(dateFormat.format(calendar.getTime()));
+
+            holder.txtTimeImg.setVisibility(View.GONE);
+            holder.imgMessage.setVisibility(View.GONE);
+        }else {
+            holder.imgMessage.setVisibility(View.VISIBLE);
+            Glide.with(mContext).load(msg.getMessage()).into(holder.imgMessage);
+            holder.txtTimeImg.setVisibility(View.VISIBLE);
+            holder.txtTimeImg.setText(dateFormat.format(calendar.getTime()));
+
+            holder.txtShowMessage.setVisibility(View.GONE);
+            holder.txtTime.setVisibility(View.GONE);
+
+        }
+
+
+        if(getItemViewType(position) == MSG_TYPE_LEFT){
+            Glide.with(mContext).load(imgURL).into(holder.imgAvatar);
+        }
+
+        if(getItemViewType(position) == MSG_TYPE_RIGHT){
+            if(position == mMessage.size() -1){
+                if(msg.getIsseen()){
+                    holder.txtIsseen.setText("đã xem");
+                }else {
+                    holder.txtIsseen.setText("đã nhận");
+                }
+            }else {
+                holder.txtIsseen.setVisibility(View.GONE);
+            }
+
+        }
+
+
+
 
     }
 
@@ -79,14 +118,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView txtShowMessage;
-        ImageView imgAvatar;
+        ImageView imgAvatar, imgMessage;
         TextView txtTime;
+        TextView txtTimeImg;
+        TextView txtIsseen;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtShowMessage = (TextView) itemView.findViewById(R.id.txtItem_chat_messageContent);
-            imgAvatar =  (ImageView) itemView.findViewById(R.id.imgItem_chat_avatar);
-            txtTime = (TextView) itemView.findViewById(R.id.txtItem_chat_time);;
+            imgAvatar =  itemView.findViewById(R.id.imgItem_chat_avatar);
+            txtIsseen =  itemView.findViewById(R.id.txtItem_chat_seen);
+            txtShowMessage = itemView.findViewById(R.id.txtItem_chat_messageContent);
+            imgMessage = itemView.findViewById(R.id.imgItem_chat_message);
+            txtTime = itemView.findViewById(R.id.txtItem_chat_time);
+            txtTimeImg = itemView.findViewById(R.id.txtItem_chat_timeImg);
+
         }
     }
 

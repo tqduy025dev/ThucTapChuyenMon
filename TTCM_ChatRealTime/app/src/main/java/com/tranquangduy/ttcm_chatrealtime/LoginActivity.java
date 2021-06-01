@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,10 +28,11 @@ import com.google.firebase.database.ServerValue;
 public class LoginActivity extends AppCompatActivity {
     EditText txtUserName;
     EditText txtPassWord;
+    ImageView imgShowPassWord;
     Button btnLogin;
     TextView tvSignUp;
     ProgressDialog progressDialog;
-
+    boolean checkShowPass = false;
 
     private FirebaseAuth mAuth;
     private Intent intent = null;
@@ -69,6 +73,23 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        imgShowPassWord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!checkShowPass){
+                    txtPassWord.setTransformationMethod(null);
+                    imgShowPassWord.setImageResource(R.drawable.ic_show_password);
+                    checkShowPass = true;
+                }else{
+                    txtPassWord.setTransformationMethod(new PasswordTransformationMethod());
+                    imgShowPassWord.setImageResource(R.drawable.ic_reshow_password);
+                    checkShowPass = false;
+                }
+
+            }
+        });
+
+
 
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 }else {
                     Toast.makeText(LoginActivity.this,"Sai email hoặc mật khẩu!" , Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                 }
             }
         });
@@ -110,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
             tvSignUp = findViewById(R.id.tv_login_dangki);
             txtUserName = findViewById(R.id.txt_login_userName);
             txtPassWord = findViewById(R.id.txt_login_passWord);
+            imgShowPassWord = findViewById(R.id.img_login_showPassWord);
 
             mAuth = FirebaseAuth.getInstance();
         }

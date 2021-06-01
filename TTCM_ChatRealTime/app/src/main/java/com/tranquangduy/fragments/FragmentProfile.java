@@ -59,8 +59,8 @@ public class FragmentProfile extends Fragment {
     TextView txtUserName, txtBio, txtBarProfile, txtWebpage;
 
     private StorageReference storageReference;
-    private Uri imageURL;
-    private StorageTask uploadTask;
+    private Uri imageUri;
+    private UploadTask uploadTask;
 
     private User user;
     private FirebaseAuth mAuth;
@@ -156,6 +156,7 @@ public class FragmentProfile extends Fragment {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                status("offline");
                 mAuth = FirebaseAuth.getInstance();
                 mAuth.signOut();
                 startActivity(new Intent(getContext(), LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
@@ -173,13 +174,16 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onClick(View v) {
                 Uri uri = Uri.parse(txtWebpage.getText().toString());
-                if(uri != null){
+                if(uri.isAbsolute()){
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_VIEW);
                     intent.setData(uri);
                     startActivity(intent);
+                }else{
+                    Toast.makeText(getContext(), "Địa chỉ này không tồn tại", Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(getContext(), "Trang web này không tồn tại!", Toast.LENGTH_SHORT).show();
+
+
             }
         });
 
@@ -245,7 +249,6 @@ public class FragmentProfile extends Fragment {
         });
 
 
-
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -256,6 +259,9 @@ public class FragmentProfile extends Fragment {
 
         dialog.show();
     }
+
+
+
 
     private String getFileExtension(Uri uri) {
         ContentResolver contentResolver = getContext().getContentResolver();
@@ -268,9 +274,9 @@ public class FragmentProfile extends Fragment {
         pd.setMessage("Uploading...");
         pd.show();
 
-        if (imageURL != null) {
-            final StorageReference fileReference = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageURL));
-            uploadTask = fileReference.putFile(imageURL);
+        if (imageUri != null) {
+            final StorageReference fileReference = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+            uploadTask = fileReference.putFile(imageUri);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -311,12 +317,23 @@ public class FragmentProfile extends Fragment {
         }
     }
 
+
+
+    private void status(String status){
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("status", status);
+        reference.updateChildren(map);
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageURL = data.getData();
+            imageUri = data.getData();
             if (uploadTask != null && uploadTask.isInProgress()) {
                 Toast.makeText(getContext(), "Đang tải ảnh !", Toast.LENGTH_SHORT).show();
             } else {
@@ -324,4 +341,7 @@ public class FragmentProfile extends Fragment {
             }
         }
     }
+
+
+
 }

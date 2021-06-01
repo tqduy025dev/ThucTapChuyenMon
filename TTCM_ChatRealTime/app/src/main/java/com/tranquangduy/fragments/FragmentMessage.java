@@ -33,6 +33,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.adapter.MessageAdapter;
 import com.tranquangduy.adapter.UserAdapter;
+import com.tranquangduy.model.ChatList;
 import com.tranquangduy.model.Message;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.MessageActivity;
@@ -54,7 +55,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
     List<User> mUser;
     UserAdapter userAdapter;
-    Set<String> listUser;
+    List<ChatList> listChat;
 
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;
@@ -107,28 +108,52 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
 
     private void getData() {
-        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference = FirebaseDatabase.getInstance().getReference("ChatList").child(firebaseUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listUser.clear();
-                // lay ra list id user da tung chat trong message
-                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
-                    Message msg = dataSnapshot.getValue(Message.class);
-                    if(msg.getReceiver().equals(firebaseUser.getUid())){
-                        listUser.add(msg.getSender());
-                    }
-                    if (msg.getSender().equals(firebaseUser.getUid())){
-                        listUser.add(msg.getReceiver());
-                    }
+                listChat.clear();
+                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    ChatList chatList = dataSnapshot.getValue(ChatList.class);
+                    listChat.add(chatList);
                 }
+
                 readMessageList();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 
+    }
+
+    private void readMessageList() {
+        reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                mUser.clear();
+                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    User user = dataSnapshot.getValue(User.class);
+                    for(ChatList chatList : listChat){
+                        if(user.getId().equals(chatList.getId())){
+                            mUser.add(user);
+                        }
+                    }
+                }
+                Collections.reverse(mUser);
+                userAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        userAdapter = new UserAdapter(getContext(), mUser, false,true,true, this);
+        recyclerView.setAdapter(userAdapter);
     }
 
     private void searchUsers(String s){
@@ -142,34 +167,6 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
     }
 
-
-    private void readMessageList() {
-        reference = FirebaseDatabase.getInstance().getReference("Users");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                mUser.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    User user = dataSnapshot.getValue(User.class);
-                    // so sanh voi list user id trong message get ra User info
-                    for (String id : listUser) {
-                        if (user.getId().equals(id)) {
-                            mUser.add(user);
-                        }
-                    }
-                    }
-                userAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-
-        userAdapter = new UserAdapter(getContext(), mUser, false,true,true, this);
-        recyclerView.setAdapter(userAdapter);
-    }
-
     private void linkView(View view) {
         edtSearch = view.findViewById(R.id.search_message);
         imgAddChat = view.findViewById(R.id.img_addRoom);
@@ -177,8 +174,8 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        listUser = new HashSet<>();
         mUser = new ArrayList<>();
+        listChat = new ArrayList<>();
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     }

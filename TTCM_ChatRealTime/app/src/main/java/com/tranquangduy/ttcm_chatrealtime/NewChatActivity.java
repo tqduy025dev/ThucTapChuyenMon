@@ -165,4 +165,9 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
         status("online");
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
+    }
 }

@@ -11,7 +11,6 @@ public class User implements Serializable {
     private String bio;
     private String webpage;
     private String status;
-    private String lastMsg;
 
 
     public User() {
@@ -26,7 +25,6 @@ public class User implements Serializable {
         this.status =status;
         this.webpage =webpage;
         this.bio = bio;
-        this.lastMsg = lastMsg;
     }
 
     public String getWebpage() {
@@ -93,11 +91,4 @@ public class User implements Serializable {
         this.bio = bio;
     }
 
-    public String getLastMsg() {
-        return lastMsg;
-    }
-
-    public void setLastMsg(String lastMsg) {
-        this.lastMsg = lastMsg;
-    }
 }
