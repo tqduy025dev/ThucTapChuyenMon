@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText txtPassWord;
     ImageView imgShowPassWord;
     Button btnLogin;
-    TextView tvSignUp;
+    TextView tvSignUp, tvforgotPass;
     ProgressDialog progressDialog;
     boolean checkShowPass = false;
 
@@ -100,6 +100,15 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
+        tvforgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     private void logIn(final String email, final String password) {
@@ -133,6 +142,7 @@ public class LoginActivity extends AppCompatActivity {
             txtUserName = findViewById(R.id.txt_login_userName);
             txtPassWord = findViewById(R.id.txt_login_passWord);
             imgShowPassWord = findViewById(R.id.img_login_showPassWord);
+            tvforgotPass = findViewById(R.id.tv_login_quenmatkhau);
 
             mAuth = FirebaseAuth.getInstance();
         }

@@ -1,8 +1,7 @@
 package com.tranquangduy.fragments;
 
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -15,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,30 +22,29 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.tranquangduy.adapter.MessageAdapter;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.tranquangduy.adapter.UserAdapter;
 import com.tranquangduy.model.ChatList;
-import com.tranquangduy.model.Message;
 import com.tranquangduy.model.User;
+import com.tranquangduy.notifications.Token;
 import com.tranquangduy.ttcm_chatrealtime.MessageActivity;
 import com.tranquangduy.ttcm_chatrealtime.NewChatActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+
 
 public class FragmentMessage extends Fragment implements OnItemClickRecycleView {
     EditText edtSearch;
@@ -69,10 +67,33 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
         linkView(view);
         getData();
         addEvent();
+        getToken();
+
 
         return view;
     }
 
+    private void getToken(){
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if(!task.isSuccessful()){
+                    Log.w("TAG", "Fetching FCM registration token failed!", task.getException());
+                    return;
+                }
+                String token = task.getResult();
+                updateToken(token);
+            }
+        });
+    }
+
+
+    private void updateToken(String token){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(firebaseUser.getUid()).setValue(token1);
+
+    }
 
     private void addEvent() {
         edtSearch.addTextChangedListener(new TextWatcher() {
