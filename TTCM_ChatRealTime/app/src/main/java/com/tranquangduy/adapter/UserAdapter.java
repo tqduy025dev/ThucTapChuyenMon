@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder>  {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
     private final Context mContext;
     private List<User> mUsers;
     private final boolean isFragment;
@@ -39,7 +39,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     private FirebaseUser firebaseUser;
     private String theLastMessage;
 
-    public UserAdapter(Context mContext, List<User> mUsers, boolean isFragment,boolean isStatus, boolean isMessage, OnItemClickRecycleView onItemClickRecycleView) {
+    public UserAdapter(Context mContext, List<User> mUsers, boolean isFragment, boolean isStatus, boolean isMessage, OnItemClickRecycleView onItemClickRecycleView) {
         this.mContext = mContext;
         this.mUsers = mUsers;
         this.isFragment = isFragment;
@@ -51,7 +51,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user,parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         return new UserViewHolder(view, onItemClickRecycleView);
@@ -64,36 +64,35 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         Glide.with(mContext).load(user.getImageUrl()).into(holder.imgViewUser);
         holder.tvUserName.setText(user.getUserName());
 
-        if(isFragment){
+        if (isFragment) {
             holder.btnFollow.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             holder.btnFollow.setVisibility(View.GONE);
         }
 
-        if(isMessage){
-            checkLastMessage(user.getId(),holder.tvFullName);
-            if(user.getId().equals(firebaseUser.getUid())){
+        if (isMessage) {
+            checkLastMessage(user.getId(), holder.tvFullName);
+            if (user.getId().equals(firebaseUser.getUid())) {
                 String a = "Chỉ có bạn";
                 holder.tvUserName.setText(a);
                 holder.imgStatus.setVisibility(View.GONE);
             }
         }
 
-        if(isStatus){
-            if(user.getStatus().equals("online")){
+        if (isStatus) {
+            if (user.getStatus().equals("online")) {
                 holder.imgStatus.setImageResource(R.drawable.ic_online);
-            }else {
+            } else {
                 holder.imgStatus.setImageResource(R.drawable.ic_offline);
             }
-        }else {
+        } else {
             holder.imgStatus.setVisibility(View.GONE);
         }
 
         isFollowing(user.getId(), holder.btnFollow);
-        if (user.getId().equals(firebaseUser.getUid())){
+        if (user.getId().equals(firebaseUser.getUid())) {
             holder.btnFollow.setVisibility(View.GONE);
         }
-
 
 
         holder.btnFollow.setOnClickListener(new View.OnClickListener() {
@@ -124,14 +123,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         return mUsers.size();
     }
 
-    public void filertListUser(ArrayList<User> filterList){
+    public void filertListUser(ArrayList<User> filterList) {
         mUsers = filterList;
         notifyDataSetChanged();
     }
 
 
-
-    public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imgViewUser;
         TextView tvUserName;
         TextView tvFullName;
@@ -157,7 +155,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         }
     }
 
-    private void addNotification(String userid){
+    private void addNotification(String userid) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -168,15 +166,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         reference.push().setValue(hashMap);
     }
 
-    private void isFollowing(final String userid, final Button button){
+    private void isFollowing(final String userid, final Button button) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Follow").child(firebaseUser.getUid()).child("following");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(userid).exists()){
+                if (dataSnapshot.child(userid).exists()) {
                     button.setText("following");
-                } else{
+                } else {
                     button.setText("follow");
                 }
             }
@@ -188,39 +186,39 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
 
-    private void checkLastMessage(String userID, TextView txt_lastMessage){
-            theLastMessage = "deFauLt"; // cố tình sai format để tránh trường hợp người dùng gửi tin nhắn đúng chữ default
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
-            reference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-                        Message msg = dataSnapshot.getValue(Message.class);
-                        if(msg.getReceiver().equals(firebaseUser.getUid()) && msg.getSender().equals(userID) ||
-                                msg.getReceiver().equals(userID) && msg.getSender().equals(firebaseUser.getUid())){
-                                if(msg.getType().equals("image")){
-                                    theLastMessage = "imAGe";
-                                }else {
-                                    theLastMessage = msg.getMessage();
-                                }
-
+    private void checkLastMessage(String userID, TextView txt_lastMessage) {
+        theLastMessage = "deFauLt"; // cố tình sai format để tránh trường hợp người dùng gửi tin nhắn đúng chữ default
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Message msg = dataSnapshot.getValue(Message.class);
+                    if (msg.getReceiver().equals(firebaseUser.getUid()) && msg.getSender().equals(userID) ||
+                            msg.getReceiver().equals(userID) && msg.getSender().equals(firebaseUser.getUid())) {
+                        if (msg.getType().equals("image")) {
+                            theLastMessage = "imAGe";
+                        } else {
+                            theLastMessage = msg.getMessage();
                         }
-                    }
 
-                    if(theLastMessage.equals("imAGe")){
-                        txt_lastMessage.setText("Đã gửi cho bạn 1 ảnh");
-                    }else if(!theLastMessage.equals("deFauLt")){
-                        txt_lastMessage.setText(theLastMessage);
-                    }else {
-                        txt_lastMessage.setText("");
                     }
-
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                if (theLastMessage.equals("imAGe")) {
+                    txt_lastMessage.setText("Đã gửi cho bạn 1 ảnh");
+                } else if (!theLastMessage.equals("deFauLt")) {
+                    txt_lastMessage.setText(theLastMessage);
+                } else {
+                    txt_lastMessage.setText("");
                 }
-            });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
 
     }
 

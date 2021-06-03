@@ -48,10 +48,12 @@ public class ResetPasswordActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
                             Toast.makeText(ResetPasswordActivity.this, "Vui lòng kiểm tra hộp thư của bạn!", Toast.LENGTH_SHORT).show();
-                            tvAddInfo.setText("Chúng tôi đã gửi yêu cầu đến tài khoản của bạn. Vui lòng kiểm tra trong hộp thư đến và quay lại đăng nhập");
+                            tvAddInfo.setVisibility(View.VISIBLE);
+                            tvAddInfo.setText("Chúng tôi đã gửi yêu cầu đến tài khoản email của bạn. Vui lòng kiểm tra trong hộp thư đến và quay lại đăng nhập");
                             txtEmail.setText("");
                         }else {
                             String error = task.getException().getMessage();
+                            tvAddInfo.setVisibility(View.GONE);
                             Toast.makeText(ResetPasswordActivity.this, error, Toast.LENGTH_SHORT).show();
                         }
                     }

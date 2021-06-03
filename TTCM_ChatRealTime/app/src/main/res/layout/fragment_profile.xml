@@ -207,17 +207,16 @@
             <LinearLayout
                 android:id="@+id/mid_bar"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_edit_profile"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:textSize="10dp"
+                    android:textSize="15dp"
                     android:text="Chỉnh sửa trang cá nhân"
-                    android:textScaleX="1.5"
                     android:background="@drawable/boder_rectangle" />
 
 
@@ -228,9 +227,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/btn_edit_profile"
-                android:layout_marginLeft="-5dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginRight="-5dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -241,8 +238,9 @@
                     <ImageButton
                         android:id="@+id/btnMyPhoto"
                         style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_gravity="center"
+                        android:scaleType="fitCenter"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_baseline_grid_view" />
                 </LinearLayout>
@@ -255,8 +253,9 @@
                     <ImageButton
                         android:id="@+id/btnSavePhoto"
                         style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_gravity="center"
+                        android:scaleType="fitCenter"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_baseline_save" />
                 </LinearLayout>

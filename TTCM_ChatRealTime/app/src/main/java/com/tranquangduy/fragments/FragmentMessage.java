@@ -1,7 +1,6 @@
 package com.tranquangduy.fragments;
 
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -35,15 +34,16 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.tranquangduy.adapter.UserAdapter;
 import com.tranquangduy.model.ChatList;
 import com.tranquangduy.model.User;
-import com.tranquangduy.notifications.Token;
+import com.tranquangduy.notifications.MyFirebaseMessaging;
 import com.tranquangduy.ttcm_chatrealtime.MessageActivity;
 import com.tranquangduy.ttcm_chatrealtime.NewChatActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 
 public class FragmentMessage extends Fragment implements OnItemClickRecycleView {
@@ -67,33 +67,12 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
         linkView(view);
         getData();
         addEvent();
-        getToken();
-
 
         return view;
     }
 
-    private void getToken(){
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                if(!task.isSuccessful()){
-                    Log.w("TAG", "Fetching FCM registration token failed!", task.getException());
-                    return;
-                }
-                String token = task.getResult();
-                updateToken(token);
-            }
-        });
-    }
 
 
-    private void updateToken(String token){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token token1 = new Token(token);
-        reference.child(firebaseUser.getUid()).setValue(token1);
-
-    }
 
     private void addEvent() {
         edtSearch.addTextChangedListener(new TextWatcher() {
@@ -134,7 +113,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listChat.clear();
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     ChatList chatList = dataSnapshot.getValue(ChatList.class);
                     listChat.add(chatList);
                 }
@@ -156,15 +135,15 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 mUser.clear();
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     User user = dataSnapshot.getValue(User.class);
-                    for(ChatList chatList : listChat){
-                        if(user.getId().equals(chatList.getId())){
+                    for (ChatList chatList : listChat) {
+                        assert user != null;
+                        if (user.getId().equals(chatList.getId())) {
                             mUser.add(user);
                         }
                     }
                 }
-                Collections.reverse(mUser);
                 userAdapter.notifyDataSetChanged();
             }
 
@@ -173,18 +152,21 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
             }
         });
-        userAdapter = new UserAdapter(getContext(), mUser, false,true,true, this);
+        userAdapter = new UserAdapter(getContext(), mUser, false, true, true, this);
         recyclerView.setAdapter(userAdapter);
     }
 
-    private void searchUsers(String s){
+    private void searchUsers(String s) {
         ArrayList<User> filterList = new ArrayList<>();
-        for(User user : mUser){
-            if(user.getUserName().toLowerCase().contains(s)){
+        for (User user : mUser) {
+            if (user.getUserName().toLowerCase().contains(s)) {
                 filterList.add(user);
             }
         }
-        userAdapter.filertListUser(filterList);
+        if(!filterList.isEmpty()){
+            userAdapter.filertListUser(filterList);
+        }
+
 
     }
 

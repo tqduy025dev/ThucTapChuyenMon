@@ -35,7 +35,7 @@ import com.tranquangduy.ttcm_chatrealtime.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
+public class FragmentSearch extends Fragment implements OnItemClickRecycleView {
     RecyclerView recyclerView;
     EditText searchUser;
     UserAdapter userAdapter;
@@ -63,21 +63,22 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (getContext() == null){
+                if (getContext() == null) {
                     return;
                 }
                 listUser.clear();
-                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     User user = dataSnapshot.getValue(User.class);
                     listUser.add(user);
                 }
                 userAdapter.notifyDataSetChanged();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-        userAdapter = new UserAdapter(getContext(), listUser, true,false, false, this);
+        userAdapter = new UserAdapter(getContext(), listUser, true, false, false, this);
         recyclerView.setAdapter(userAdapter);
     }
 
@@ -94,8 +95,8 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
     private void addEvent() {
         // bàn phím tự động bật lên vào edit text khi chạy activity
         searchUser.requestFocus();
-        searchUser.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN , 0, 0, 0));
-        searchUser.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP , 0, 0, 0));
+        searchUser.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+        searchUser.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
 
         searchUser.addTextChangedListener(new TextWatcher() {
             @Override
@@ -114,23 +115,22 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView{
     }
 
 
-    private void searchUsers(String s){
+    private void searchUsers(String s) {
         Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("userName")
                 .startAt(s)
-                .endAt(s+"\uf8ff");
+                .endAt(s + "\uf8ff");
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listUser.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
-                    if(!user.getId().equals(firebaseUser.getUid())){
-                        listUser.add(user);
-                    }
+                    listUser.add(user);
                 }
                 userAdapter.notifyDataSetChanged();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }

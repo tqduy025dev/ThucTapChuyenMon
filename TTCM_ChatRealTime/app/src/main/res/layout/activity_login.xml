@@ -16,7 +16,7 @@
         android:layout_marginStart="54dp"
         android:layout_marginTop="52dp"
         android:layout_marginEnd="53dp"
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="102dp"
         android:gravity="center"
         android:text="Đăng Nhập"
         android:textSize="40sp"
@@ -41,7 +41,7 @@
 
         <EditText
             android:id="@+id/txt_login_userName"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@android:color/transparent"
             android:hint="Email"
@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn_login"
         android:layout_alignStart="@+id/btn_login"
-        android:layout_marginStart="0dp"
+        android:layout_alignEnd="@+id/btn_login"
         android:layout_marginBottom="70dp"
         android:background="@drawable/boder_rectangle">
 
@@ -73,7 +73,7 @@
 
         <EditText
             android:id="@+id/txt_login_passWord"
-            android:layout_width="265dp"
+            android:layout_width="240dp"
             android:layout_height="50dp"
             android:background="@android:color/transparent"
             android:hint="Mật khẩu"
@@ -89,7 +89,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center"
-            android:paddingEnd="10dp"
+            android:padding="5dp"
             android:src="@drawable/ic_reshow_password" />
 
     </LinearLayout>
@@ -98,11 +98,13 @@
         android:id="@+id/btn_login"
         android:layout_width="335dp"
         android:layout_height="50dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginEnd="46dp"
-        android:layout_marginBottom="256dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="250dp"
         android:background="@drawable/boder_rectangle"
         android:text="Đăng nhập"
         android:textColor="@android:color/background_dark"
@@ -130,7 +132,7 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:textColor="@color/black"
-            android:text="đăng kí"
+            android:text="Đăng kí"
             android:textSize="15sp" />
 
     </LinearLayout>
@@ -142,7 +144,7 @@
         android:layout_alignStart="@+id/linearPassword"
         android:layout_alignTop="@+id/linearPassword"
         android:layout_alignEnd="@+id/linearPassword"
-        android:layout_marginStart="205dp"
+        android:layout_marginStart="150dp"
         android:layout_marginTop="56dp"
         android:layout_marginEnd="0dp"
         android:textColor="@color/black"

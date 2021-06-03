@@ -4,10 +4,13 @@ package com.tranquangduy.fragments;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -46,6 +50,7 @@ import com.tranquangduy.ttcm_chatrealtime.LoginActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -156,6 +161,7 @@ public class FragmentProfile extends Fragment {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                updateToken(firebaseUser.getUid());
                 status("offline");
                 mAuth = FirebaseAuth.getInstance();
                 mAuth.signOut();
@@ -199,7 +205,12 @@ public class FragmentProfile extends Fragment {
 
 
     }
-
+    private void updateToken(String userID) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        Map<String, Object> map = new HashMap<>();
+        map.put("token", "");
+        reference.child(userID).updateChildren(map);
+    }
     private void openDiglogEditProfile(User user) {
         final Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
