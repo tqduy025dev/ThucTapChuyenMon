@@ -180,12 +180,12 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onClick(View v) {
                 Uri uri = Uri.parse(txtWebpage.getText().toString());
-                if(uri.isAbsolute()){
+                if (uri.isAbsolute()) {
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_VIEW);
                     intent.setData(uri);
                     startActivity(intent);
-                }else{
+                } else {
                     Toast.makeText(getContext(), "Địa chỉ này không tồn tại", Toast.LENGTH_SHORT).show();
                 }
 
@@ -205,12 +205,14 @@ public class FragmentProfile extends Fragment {
 
 
     }
+
     private void updateToken(String userID) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
         Map<String, Object> map = new HashMap<>();
         map.put("token", "");
         reference.child(userID).updateChildren(map);
     }
+
     private void openDiglogEditProfile(User user) {
         final Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -272,8 +274,6 @@ public class FragmentProfile extends Fragment {
     }
 
 
-
-
     private String getFileExtension(Uri uri) {
         ContentResolver contentResolver = getContext().getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
@@ -294,7 +294,6 @@ public class FragmentProfile extends Fragment {
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
-
                     return fileReference.getDownloadUrl();
                 }
             }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -329,8 +328,7 @@ public class FragmentProfile extends Fragment {
     }
 
 
-
-    private void status(String status){
+    private void status(String status) {
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
 
         HashMap<String, Object> map = new HashMap<>();
@@ -352,7 +350,6 @@ public class FragmentProfile extends Fragment {
             }
         }
     }
-
 
 
 }

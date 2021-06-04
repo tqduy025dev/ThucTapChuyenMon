@@ -171,8 +171,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 .child("Follow").child(firebaseUser.getUid()).child("following");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(userid).exists()) {
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.child(userid).exists()) {
                     button.setText("following");
                 } else {
                     button.setText("follow");

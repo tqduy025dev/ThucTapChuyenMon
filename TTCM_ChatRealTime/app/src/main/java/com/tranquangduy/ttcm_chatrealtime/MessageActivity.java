@@ -60,7 +60,7 @@ import java.util.Map;
 
 
 public class MessageActivity extends AppCompatActivity {
-    private static final int PICTURE_PICK = 1;
+    private static final int REQUEST_CODE = 1;
     ImageView imgBack;
     ImageView imgAvt;
     ImageButton btnSendImage;
@@ -112,7 +112,7 @@ public class MessageActivity extends AppCompatActivity {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
 
-                startActivityForResult(Intent.createChooser(intent, "CHỌN ẢNH"), PICTURE_PICK);
+                startActivityForResult(Intent.createChooser(intent, "CHỌN ẢNH"), REQUEST_CODE);
             }
         });
 
@@ -392,7 +392,7 @@ public class MessageActivity extends AppCompatActivity {
             final StorageReference fileReference = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
             uploadTask = fileReference.putFile(imageUri);
 
-            Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                     if (!task.isSuccessful()) {
@@ -434,7 +434,7 @@ public class MessageActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICTURE_PICK && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
             sendMessageImage(firebaseUser.getUid(), user.getId());
         } else {
