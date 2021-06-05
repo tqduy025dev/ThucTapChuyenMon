@@ -24,7 +24,7 @@
         app:showAsAction="always"
         android:title="" />
     <item
-        android:id="@+id/menu"
+        android:id="@+id/menu_profile"
         android:icon="@drawable/ic_person"
         app:showAsAction="always"
         android:title="" />

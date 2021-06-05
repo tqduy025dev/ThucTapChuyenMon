@@ -140,6 +140,11 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView {
 
     @Override
     public void onItemClick(int position) {
-        // click vào item user
+
+    }
+
+    @Override
+    public void onItemLongClick(int postition) {
+
     }
 }

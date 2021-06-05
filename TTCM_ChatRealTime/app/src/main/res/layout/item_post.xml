@@ -2,24 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_marginTop="10dp"
+    android:background="#A9ADB5"
+    android:paddingBottom="15dp">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/more"
-        android:layout_margin="15dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/boder_rectangle_black"
+        android:background="@color/white"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -27,48 +24,59 @@
                 android:id="@+id/imgItem_Avt"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_margin="10dp"/>
-
-            <TextView
+                android:layout_margin="7dp" />
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtItem_post_userName"
-                android:layout_gravity="center_vertical"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:text="Tên người dùng"
-                android:textStyle="bold"/>
+                android:layout_gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/txtItem_post_userName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Tên người dùng"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtItem_post_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="time"/>
+
+            </LinearLayout>
+
 
         </LinearLayout>
+
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/txtItem_post_postContent"
-                android:text="nội dung trạng thái"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="10dp"
+                android:text="nội dung trạng thái"
                 android:textColor="@color/black"
-                android:textSize="17dp"
-                android:layout_marginStart="8dp"/>
+                android:textSize="17dp" />
         </LinearLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ImageView
+            android:id="@+id/imgViewItem_post"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="7dp"
+            android:layout_marginTop="7dp"
+            android:scaleType="fitCenter" />
 
-            <ImageView
-                android:id="@+id/imgViewItem_post"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -79,40 +87,43 @@
                 android:id="@+id/imgItem_like"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/ic_favorite"/>
+                android:src="@drawable/ic_favorite" />
 
             <ImageView
                 android:id="@+id/imgItem_comment"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/ic_comment"
+                android:layout_marginStart="15dp"
                 android:layout_toEndOf="@id/imgItem_like"
-                android:layout_marginStart="15dp"/>
+                android:src="@drawable/ic_comment" />
 
             <ImageView
                 android:id="@+id/imgItem_save"
                 android:layout_width="35dp"
                 android:layout_height="34dp"
-                android:src="@drawable/ic_baseline_save"
-                android:layout_alignParentEnd="true"/>
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_baseline_save" />
 
         </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/stack"
+            android:layout_height="1dp"/>
 
         <TextView
             android:id="@+id/txtItem_post_likeCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtItem_post_commentCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="View All 20 Comments"
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="10dp" />
 
     </LinearLayout>
 

@@ -66,6 +66,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         if (isFragment) {
             holder.btnFollow.setVisibility(View.VISIBLE);
+            holder.tvFullName.setText(user.getFullName());
+
         } else {
             holder.btnFollow.setVisibility(View.GONE);
         }

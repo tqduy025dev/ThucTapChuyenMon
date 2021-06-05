@@ -1,6 +1,8 @@
 package com.tranquangduy.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -51,10 +54,18 @@ public class FragmentHome extends Fragment {
 
         linkView(view);
         checkFollowing();
+        getData();
         addEvent();
 
 
         return view;
+    }
+
+    private void getData() {
+        SharedPreferences preferences = getContext().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+        String mImgURL = preferences.getString("mImgURL", "");
+        Glide.with(this).load(mImgURL).into(imgViewAvt);
+
     }
 
 

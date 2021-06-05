@@ -1,6 +1,7 @@
 package com.tranquangduy.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,17 +24,23 @@ import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.fragments.FragmentProfile;
 import com.tranquangduy.model.Post;
 import com.tranquangduy.model.User;
+import com.tranquangduy.ttcm_chatrealtime.CommentActivity;
+import com.tranquangduy.ttcm_chatrealtime.MoreStatusActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder>{
     public static final String PREF = "MyPreferences";
     Context mContext;
     List<Post> mPost;
+    ArrayList<String> listIDLiked;
+    ArrayList<User> listUserLiked;
+    UserAdapter userAdapter;
 
     private FirebaseUser firebaseUser;
 
@@ -118,6 +125,38 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
 
 
+        holder.imgComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, CommentActivity.class);
+                intent.putExtra("postID", post.getPostid());
+                intent.putExtra("publisherID", post.getPublisher());
+                mContext.startActivity(intent);
+
+            }
+        });
+
+        holder.txtCommentCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, CommentActivity.class);
+                intent.putExtra("postID", post.getPostid());
+                intent.putExtra("publisherID", post.getPublisher());
+                mContext.startActivity(intent);
+            }
+        });
+
+        holder.txtLikeCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, MoreStatusActivity.class);
+                intent.putExtra("id", post.getPostid());
+                intent.putExtra("title", "Những người thích bài viết này!");
+                mContext.startActivity(intent);
+            }
+        });
+
+
 
 
 
@@ -127,6 +166,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public int getItemCount() {
         return mPost.size();
     }
+
+
+
 
     public class PostViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAvt;
@@ -186,7 +228,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
     }
 
-    private void isLiked(final String postid, final ImageView imageView){
+    private void isLiked(final String postid, final ImageView imageLike){
 
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -196,11 +238,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child(firebaseUser.getUid()).exists()){
-                    imageView.setImageResource(R.drawable.ic_favorite_red);
-                    imageView.setTag("liked");
+                    imageLike.setImageResource(R.drawable.ic_favorite_red);
+                    imageLike.setTag("liked");
                 } else{
-                    imageView.setImageResource(R.drawable.ic_favorite);
-                    imageView.setTag("like");
+                    imageLike.setImageResource(R.drawable.ic_favorite);
+                    imageLike.setTag("like");
                 }
             }
 
@@ -236,12 +278,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
     }
 
-    private void getCommetns(final String postId, final TextView comments){
+    private void getCommetns(final String postId, final TextView commentCount){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Comments").child(postId);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                comments.setText("View All "+snapshot.getChildrenCount()+" Comments");
+                commentCount.setText(snapshot.getChildrenCount()+" bình luận");
             }
 
             @Override
@@ -251,12 +293,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
     }
 
-    private void getLikes(final String postId , final TextView likes){
+    private void getLikes(final String postId , final TextView likeCount){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Likes").child(postId);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                likes.setText(snapshot.getChildrenCount() +" likes");
+                likeCount.setText(snapshot.getChildrenCount() +" lượt thích");
             }
 
             @Override
@@ -266,6 +308,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
 
     }
+
+
 
 
 

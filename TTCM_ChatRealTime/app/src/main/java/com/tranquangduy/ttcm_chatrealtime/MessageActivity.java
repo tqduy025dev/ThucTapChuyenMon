@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -100,8 +101,7 @@ public class MessageActivity extends AppCompatActivity {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            finish();
             }
         });
 
@@ -111,7 +111,6 @@ public class MessageActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-
                 startActivityForResult(Intent.createChooser(intent, "CHỌN ẢNH"), REQUEST_CODE);
             }
         });
@@ -135,6 +134,7 @@ public class MessageActivity extends AppCompatActivity {
         });
 
     }
+
 
     private void linkView() {
         imgAvt = findViewById(R.id.img_message_avtUser);
@@ -214,7 +214,6 @@ public class MessageActivity extends AppCompatActivity {
         String userId = preferences.getString("mUserID", "");
         String userName = preferences.getString("mUserName", "");
 
-
         reference = FirebaseDatabase.getInstance().getReference("Users").child(userID);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -224,8 +223,8 @@ public class MessageActivity extends AppCompatActivity {
                 if (token.equals("")) {
                     return;
                 }
-                    JSONObject to = new JSONObject();
-                    JSONObject data = new JSONObject();
+                JSONObject to = new JSONObject();
+                JSONObject data = new JSONObject();
                 try {
                     data.put("title", userName);
                     data.put("message", message);
@@ -448,13 +447,15 @@ public class MessageActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         status("online");
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        status("offline");
         reference.removeEventListener(seenListener);
+        status("offline");
+
     }
 
 }

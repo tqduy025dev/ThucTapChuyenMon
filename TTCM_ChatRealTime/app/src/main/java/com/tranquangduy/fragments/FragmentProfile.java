@@ -67,6 +67,7 @@ public class FragmentProfile extends Fragment {
     private Uri imageUri;
     private UploadTask uploadTask;
 
+    private String profileID;
     private User user;
     private FirebaseAuth mAuth;
     private FirebaseUser firebaseUser;
@@ -78,16 +79,28 @@ public class FragmentProfile extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         linkView(view);
-        addEvent();
         getUser();
+        addEvent();
         getFollow();
+        setEditProfile();
 
         return view;
 
     }
 
+    private void setEditProfile() {
+        if(profileID.equals(firebaseUser.getUid())){
+            btnEditProfile.setVisibility(View.VISIBLE);
+        }else {
+            btnEditProfile.setVisibility(View.GONE);
+        }
+
+
+    }
+
+
     private void getFollow() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow").child(firebaseUser.getUid()).child("following");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow").child(profileID).child("following");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -100,7 +113,7 @@ public class FragmentProfile extends Fragment {
             }
         });
 
-        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Follow").child(firebaseUser.getUid()).child("followers");
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Follow").child(profileID).child("followers");
         reference1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -116,7 +129,10 @@ public class FragmentProfile extends Fragment {
     }
 
     private void getUser() {
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        SharedPreferences preferences = getContext().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+        profileID = preferences.getString("profileID", "");
+
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(profileID);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -193,16 +209,17 @@ public class FragmentProfile extends Fragment {
             }
         });
 
-        imgViewAvt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, IMAGE_REQUEST);
-            }
-        });
-
+        if(profileID.equals(firebaseUser.getUid())){
+            imgViewAvt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(intent, IMAGE_REQUEST);
+                }
+            });
+        }
 
     }
 
@@ -248,7 +265,7 @@ public class FragmentProfile extends Fragment {
                     String str_bio = edtBio.getText().toString();
                     String str_webpage = edtWebpage.getText().toString();
 
-                    reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+                    reference = FirebaseDatabase.getInstance().getReference("Users").child(profileID);
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("userName", str_userName.toLowerCase());
                     map.put("fullName", str_fullName);

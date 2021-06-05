@@ -47,7 +47,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_MessageUser"
+        android:id="@+id/recyclerView_messageUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/bar" />

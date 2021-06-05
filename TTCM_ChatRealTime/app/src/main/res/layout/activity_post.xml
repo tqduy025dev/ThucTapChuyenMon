@@ -93,6 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
+            android:layout_marginStart="10dp"
             android:textSize="17dp"
             android:text="Thêm vào bài viết của bạn"/>
 
@@ -102,17 +103,7 @@
             android:layout_height="30dp"
             android:layout_marginEnd="10dp"
             android:src="@drawable/ic_image"
-            android:layout_toStartOf="@+id/imgAdd_post_location" />
-
-        <ImageView
-            android:id="@+id/imgAdd_post_location"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:scaleType="fitXY"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_location"
-            android:background="@color/white"
-            android:layout_marginEnd="10dp" />
+            android:layout_alignParentEnd="true"/>
 
     </RelativeLayout>
 

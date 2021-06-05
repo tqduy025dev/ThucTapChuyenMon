@@ -173,7 +173,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
     private void linkView(View view) {
         edtSearch = view.findViewById(R.id.search_message);
         imgAddChat = view.findViewById(R.id.img_addRoom);
-        recyclerView = view.findViewById(R.id.recyclerView_MessageUser);
+        recyclerView = view.findViewById(R.id.recyclerView_messageUser);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -190,5 +190,10 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
         User user = mUser.get(position);
         intent.putExtra("user_message", user);
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemLongClick(int postition) {
+
     }
 }

@@ -113,7 +113,7 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
     private void getData() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
         listUser = new ArrayList<>();
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listUser.clear();
@@ -126,7 +126,7 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-        userAdapter = new UserAdapter(NewChatActivity.this, listUser,false, false,false, this);
+        userAdapter = new UserAdapter(NewChatActivity.this, listUser,true, false,false, this);
         recyclerViewUser.setAdapter(userAdapter);
 
     }
@@ -144,10 +144,15 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(NewChatActivity.this, MessageActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         User user = listUser.get(position);
         intent.putExtra("user_newChat", user);
         startActivity(intent);
+
+    }
+
+    @Override
+    public void onItemLongClick(int postition) {
 
     }
 

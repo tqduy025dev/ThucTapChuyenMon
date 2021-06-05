@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.installations.Utils;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -38,14 +40,13 @@ public class PostActivity extends AppCompatActivity{
     private static final int REQUEST_CODE = 1;
     ImageView imgBack;
     ImageView imgAddImg;
-    ImageView imgAddLocation;
     ImageView imgViewPost;
     EditText edtDescription;
     TextView txtPost;
 
     private UploadTask uploadTask;
     private StorageReference storageReference;
-    private Uri imagePostUri;
+    private Uri imagePostUri = null;
 
     private FirebaseUser firebaseUser;
 
@@ -73,15 +74,23 @@ public class PostActivity extends AppCompatActivity{
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-
                 startActivityForResult(Intent.createChooser(intent, "CHỌN ẢNH"), REQUEST_CODE);
             }
         });
 
+
+
         txtPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                postImage();
+                String str_Description = edtDescription.getText().toString().trim();
+                if(TextUtils.isEmpty(str_Description) && imagePostUri == null){
+                    Toast.makeText(PostActivity.this, "Bạn chưa chọn ảnh hoặc viết trạng thái", Toast.LENGTH_SHORT).show();
+                    edtDescription.setText("");
+                }else {
+                    postImage();
+                }
+
             }
         });
 
@@ -93,7 +102,6 @@ public class PostActivity extends AppCompatActivity{
         imgBack = findViewById(R.id.img_post_close);
         imgViewPost = findViewById(R.id.imgView_post);
         imgAddImg = findViewById(R.id.imgAdd_post_image);
-        imgAddLocation = findViewById(R.id.imgAdd_post_location);
         edtDescription = findViewById(R.id.txt_post_description);
         txtPost = findViewById(R.id.txt_post);
 

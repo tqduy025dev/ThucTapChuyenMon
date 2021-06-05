@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -45,13 +47,34 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private FirebaseUser firebaseUser;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         linkView();
-        getData();
+        getData();// get từ database
+        loadData(); // load từ các activity, fragment
+
+    }
+
+    private void loadData() {
+        Bundle intent = getIntent().getExtras();
+        if(intent != null){
+            String publisherID = intent.getString("publisherID");
+
+            SharedPreferences myPreferences = getSharedPreferences(PREF, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = myPreferences.edit();
+            editor.putString("profileID", publisherID);
+            editor.apply();
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentProfile()).commit();
+        }else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentHome()).commit();
+        }
+
+
 
     }
 
@@ -90,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentHome()).commit();
+
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemReselectedListener
@@ -108,7 +131,11 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.menu_search:
                     selectedfragment = new FragmentSearch();
                     break;
-                case R.id.menu:
+                case R.id.menu_profile:
+                    SharedPreferences myPreferences = getSharedPreferences(PREF, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = myPreferences.edit();
+                    editor.putString("profileID", firebaseUser.getUid());
+                    editor.apply();
                     selectedfragment = new FragmentProfile();
                     break;
                 case R.id.menu_notification:

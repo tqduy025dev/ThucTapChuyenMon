@@ -5,9 +5,8 @@
             android:opticalInsetBottom="@dimen/activity_vertical_margin"
             android:shape="line" >
             <stroke
-                android:width="0.5dp"
+                android:width="0.3dp"
                 android:color="@android:color/background_dark"/>
-
         </shape>
     </item>
 </selector>

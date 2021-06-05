@@ -13,8 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TTCM_ChatRealTime">
-        <activity android:name=".PostActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+        <activity android:name=".MoreStatusActivity"></activity>
+        <activity
+            android:name=".CommentActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
+        <activity
+            android:name=".PostActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".ResetPasswordActivity"
             android:parentActivityName=".LoginActivity"
