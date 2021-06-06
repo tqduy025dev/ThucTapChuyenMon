@@ -26,8 +26,8 @@ import com.tranquangduy.ttcm_chatrealtime.R;
 import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotiViewHolder> {
-    private Context mContext;
-    private List<Notification> mNotifications;
+    private final Context mContext;
+    private final List<Notification> mNotifications;
 
     public NotificationAdapter(Context mContext, List<Notification> mNotifications) {
         this.mContext = mContext;

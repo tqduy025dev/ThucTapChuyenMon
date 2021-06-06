@@ -34,7 +34,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     private final boolean isFragment;
     private final boolean isMessage;
     private final boolean isStatus;
-    private OnItemClickRecycleView onItemClickRecycleView;
+    private final OnItemClickRecycleView onItemClickRecycleView;
 
     private FirebaseUser firebaseUser;
     private String theLastMessage;
@@ -75,8 +75,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         if (isMessage) {
             checkLastMessage(user.getId(), holder.tvFullName);
             if (user.getId().equals(firebaseUser.getUid())) {
-                String a = "Chỉ có bạn";
-                holder.tvUserName.setText(a);
+                String t = mContext.getString(R.string.only_me);
+                holder.tvUserName.setText(t);
                 holder.imgStatus.setVisibility(View.GONE);
             }
         }
@@ -100,7 +100,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         holder.btnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (holder.btnFollow.getText().toString().equals("follow")) {
+                if (holder.btnFollow.getText().toString().equals("theo dõi")) {
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid())
                             .child("following").child(user.getId()).setValue(true);
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(user.getId())
@@ -159,10 +159,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     private void addNotification(String userid) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
-
+        String t = mContext.getString(R.string.notification_follow); // lấy text ở file string.xml mà đa ngôn ngữ thôi :v
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", firebaseUser.getUid());
-        hashMap.put("text", "đang bắt đầu theo dõi bạn");
+        hashMap.put("text", t);
         hashMap.put("postid", "");
         hashMap.put("ispost", Boolean.FALSE);
         reference.push().setValue(hashMap);
@@ -173,16 +173,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 .child("Follow").child(firebaseUser.getUid()).child("following");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String t;
                 if (snapshot.child(userid).exists()) {
-                    button.setText("following");
+                    t = mContext.getString(R.string.following);
+                    button.setText(t);
                 } else {
-                    button.setText("follow");
+                    t = mContext.getString(R.string.follow);
+                    button.setText(t);
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
@@ -208,7 +211,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 }
 
                 if (theLastMessage.equals("imAGe")) {
-                    txt_lastMessage.setText("Đã gửi cho bạn 1 ảnh");
+                    String t = mContext.getString(R.string.notification_send_img);
+                    txt_lastMessage.setText(t);
                 } else if (!theLastMessage.equals("deFauLt")) {
                     txt_lastMessage.setText(theLastMessage);
                 } else {

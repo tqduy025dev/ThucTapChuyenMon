@@ -13,7 +13,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="52dp"
         android:gravity="center"
-        android:text="Đăng Kí"
+        android:text="@string/sigup"
         android:textSize="35dp"
         android:textStyle="bold" />
 
@@ -27,7 +27,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:background="@drawable/boder_rectangle"
-        android:hint="Tên đăng nhập"
+        android:hint="@string/usernane"
         android:paddingLeft="15dp"
         android:inputType="textLongMessage"
         android:maxLines="1"
@@ -48,7 +48,7 @@
         android:background="@drawable/boder_rectangle"
         android:maxLines="1"
         android:inputType="textLongMessage"
-        android:hint="Họ và Tên"
+        android:hint="@string/fullname"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:textColor="@android:color/background_dark"
@@ -64,7 +64,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:background="@drawable/boder_rectangle"
-        android:hint="Mật khẩu"
+        android:hint="@string/prompt_password"
         android:maxLines="1"
         android:inputType="textPassword"
         android:paddingLeft="15dp"
@@ -84,7 +84,7 @@
         android:background="@drawable/boder_rectangle"
         android:inputType="textPassword"
         android:maxLines="1"
-        android:hint="Xác nhận mật khẩu"
+        android:hint="@string/confim_password"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:textColor="@android:color/background_dark"
@@ -100,7 +100,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:background="@drawable/boder_rectangle"
-        android:hint="Email"
+        android:hint="@string/prompt_email"
         android:inputType="textEmailAddress"
         android:maxLines="1"
         android:paddingLeft="15dp"
@@ -120,7 +120,7 @@
         android:layout_marginEnd="49dp"
         android:layout_marginBottom="179dp"
         android:background="@drawable/boder_rectangle"
-        android:text="Đăng kí"
+        android:text="@string/sigup"
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -144,7 +144,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:text="Tôi đã có tài khoản?"
+                android:text="@string/haved_account"
                 android:textSize="15sp" />
             <TextView
                 android:id="@+id/tv_signUp_trovedangnhap"
@@ -152,15 +152,12 @@
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:textColor="@color/black"
-                android:text="Đăng nhập"
+                android:text="@string/login"
                 android:textSize="15sp" />
 
 
 
         </LinearLayout>
-
-
-
 
     </LinearLayout>
 

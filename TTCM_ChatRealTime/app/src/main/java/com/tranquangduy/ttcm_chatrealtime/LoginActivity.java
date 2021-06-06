@@ -36,8 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     Button btnLogin;
     TextView tvSignUp, tvforgotPass;
     ProgressDialog progressDialog;
-    boolean checkShowPass = false;
 
+    boolean checkShowPass = false;
     private FirebaseAuth mAuth;
     private Intent intent = null;
     DatabaseReference reference;
@@ -61,13 +61,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String str_email = txtUserName.getText().toString().trim();
                 String str_password = txtPassWord.getText().toString();
-                txtUserName.setBackgroundResource(R.drawable.boder_while);
-                txtPassWord.setBackgroundResource(R.drawable.boder_while);
                 if (TextUtils.isEmpty(str_email)) {
-                    txtUserName.setBackgroundResource(R.drawable.boder_red);
                     Toast.makeText(LoginActivity.this, "Không được để trống Email!", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(str_password)) {
-                    txtPassWord.setBackgroundResource(R.drawable.boder_red);
                     Toast.makeText(LoginActivity.this, "Không được để trống Password!!", Toast.LENGTH_SHORT).show();
                 } else {
                     logIn(str_email, str_password);

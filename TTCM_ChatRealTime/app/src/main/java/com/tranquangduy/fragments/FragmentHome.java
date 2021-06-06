@@ -81,6 +81,7 @@ public class FragmentHome extends Fragment {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                     followingList.add(dataSnapshot.getKey());
                 }
+                followingList.add(firebaseUser.getUid());
 
                 readPosts();
             }

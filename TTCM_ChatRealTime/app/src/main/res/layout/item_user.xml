@@ -59,12 +59,13 @@
         android:orientation="horizontal">
 
         <Button
+            android:textAllCaps="false"
             android:id="@+id/btnItem_follow"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
-            android:padding="5dp"
-            android:text="Follow" />
+            android:background="@drawable/background_text"
+            android:padding="5dp"/>
 
 
     </LinearLayout>

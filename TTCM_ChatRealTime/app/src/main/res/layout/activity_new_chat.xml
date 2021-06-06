@@ -7,11 +7,10 @@
     tools:context=".MessageActivity">
 
 
-
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bar"
         android:background="?android:attr/windowBackground">
 
         <androidx.appcompat.widget.Toolbar
@@ -42,49 +41,46 @@
                     android:layout_marginStart="17dp"
                     android:layout_marginTop="1dp"
                     android:layout_toEndOf="@+id/img_chat_back"
+                    android:text="@string/new_message"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:text="Tin nhắn mới" />
+                    android:textStyle="bold" />
 
 
             </RelativeLayout>
 
         </androidx.appcompat.widget.Toolbar>
+
         <LinearLayout
+            android:id="@+id/linearFromto"
             android:layout_width="match_parent"
-            android:layout_margin="10dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/to"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:text="Đến:"/>
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/txt_search_user_chat"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:layout_marginStart="5dp"
-                android:hint="Nhập tên hoặc nhóm"/>
+                android:paddingStart="10dp"
+                android:paddingEnd="6dp"
+                android:inputType="textPersonName"
+                android:background="@drawable/background_text" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
-        android:id="@+id/scrollMess"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleView_user_chat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/bar">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycleView_user_chat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-
-    </ScrollView>
-
-
-
+        android:layout_below="@id/bar"
+        android:layout_height="wrap_content" />
 
 
 </RelativeLayout>

@@ -30,9 +30,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public static final int MSG_TYPE_LEFT = 0;
     public static final int MSG_TYPE_RIGHT = 1;
 
-    private Context mContext;
-    private List<Message> mMessage;
-    private String imgURL;
+    private final Context mContext;
+    private final List<Message> mMessage;
+    private final String imgURL;
 
     FirebaseUser firebaseUser;
 

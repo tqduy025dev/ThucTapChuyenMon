@@ -41,15 +41,18 @@ public class ResetPasswordActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String str_email = txtEmail.getText().toString().trim();
                 if(str_email.equals("")){
-                    Toast.makeText(ResetPasswordActivity.this, "Vui lòng nhập địa chỉ Email", Toast.LENGTH_SHORT).show();
+                    String t = getString(R.string.check_email);
+                    Toast.makeText(ResetPasswordActivity.this, t, Toast.LENGTH_SHORT).show();
                 }
                 firebaseAuth.sendPasswordResetEmail(str_email).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(ResetPasswordActivity.this, "Vui lòng kiểm tra hộp thư của bạn!", Toast.LENGTH_SHORT).show();
+                            String t = getString(R.string.check_mailbox);
+                            Toast.makeText(ResetPasswordActivity.this, t, Toast.LENGTH_SHORT).show();
                             tvAddInfo.setVisibility(View.VISIBLE);
-                            tvAddInfo.setText("Chúng tôi đã gửi yêu cầu đến tài khoản email của bạn. Vui lòng kiểm tra trong hộp thư đến và quay lại đăng nhập");
+                            String t1 = getString(R.string.text_fogot_pass);
+                            tvAddInfo.setText(t1);
                             txtEmail.setText("");
                         }else {
                             String error = task.getException().getMessage();

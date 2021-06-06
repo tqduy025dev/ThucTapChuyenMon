@@ -3,14 +3,32 @@ package com.tranquangduy.fragments;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentSender;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.database.DatabaseErrorHandler;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.UserHandle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +45,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
@@ -47,8 +66,16 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.LoginActivity;
+import com.tranquangduy.ttcm_chatrealtime.MainActivity;
+import com.tranquangduy.ttcm_chatrealtime.PostActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,10 +83,9 @@ import static android.app.Activity.RESULT_OK;
 
 public class FragmentProfile extends Fragment {
     private static final int IMAGE_REQUEST = 1;
-
     ImageButton btnLogout, btnMyPhoto, btnSavePhoto;
-    Button btnEditProfile;
-    ImageView imgViewAvt;
+    Button btnEditProfile, btnFollow;
+    ImageView imgViewAvt, imgBack;
     TextView txtPost, txtFollowers, txtFollowing;
     TextView txtUserName, txtBio, txtBarProfile, txtWebpage;
 
@@ -67,7 +93,6 @@ public class FragmentProfile extends Fragment {
     private Uri imageUri;
     private UploadTask uploadTask;
 
-    private String profileID;
     private User user;
     private FirebaseAuth mAuth;
     private FirebaseUser firebaseUser;
@@ -81,26 +106,15 @@ public class FragmentProfile extends Fragment {
         linkView(view);
         getUser();
         addEvent();
-        getFollow();
-        setEditProfile();
+        getFollowPost();
 
         return view;
 
     }
 
-    private void setEditProfile() {
-        if(profileID.equals(firebaseUser.getUid())){
-            btnEditProfile.setVisibility(View.VISIBLE);
-        }else {
-            btnEditProfile.setVisibility(View.GONE);
-        }
 
-
-    }
-
-
-    private void getFollow() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow").child(profileID).child("following");
+    private void getFollowPost() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow").child(firebaseUser.getUid()).child("following");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -113,7 +127,7 @@ public class FragmentProfile extends Fragment {
             }
         });
 
-        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Follow").child(profileID).child("followers");
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Follow").child(firebaseUser.getUid()).child("followers");
         reference1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -126,13 +140,13 @@ public class FragmentProfile extends Fragment {
             }
         });
 
+
+
+
     }
 
     private void getUser() {
-        SharedPreferences preferences = getContext().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-        profileID = preferences.getString("profileID", "");
-
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(profileID);
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -145,6 +159,7 @@ public class FragmentProfile extends Fragment {
                 txtBarProfile.setText(user.getUserName());
                 txtBio.setText(user.getBio());
                 txtWebpage.setText(user.getWebpage());
+
             }
 
             @Override
@@ -168,12 +183,16 @@ public class FragmentProfile extends Fragment {
         txtBarProfile = view.findViewById(R.id.txtBar_profile);
         btnEditProfile = view.findViewById(R.id.btn_edit_profile);
         txtWebpage = view.findViewById(R.id.txt_profile_webpage);
+        btnFollow = view.findViewById(R.id.btn_profile_follow);
+        imgBack = view.findViewById(R.id.img_profile_back);
 
         storageReference = FirebaseStorage.getInstance().getReference("Uploads");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     private void addEvent() {
+        imgBack.setVisibility(View.GONE);
+
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -209,7 +228,8 @@ public class FragmentProfile extends Fragment {
             }
         });
 
-        if(profileID.equals(firebaseUser.getUid())){
+
+
             imgViewAvt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -219,9 +239,11 @@ public class FragmentProfile extends Fragment {
                     startActivityForResult(intent, IMAGE_REQUEST);
                 }
             });
-        }
+
 
     }
+
+
 
     private void updateToken(String userID) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
@@ -265,7 +287,7 @@ public class FragmentProfile extends Fragment {
                     String str_bio = edtBio.getText().toString();
                     String str_webpage = edtWebpage.getText().toString();
 
-                    reference = FirebaseDatabase.getInstance().getReference("Users").child(profileID);
+                    reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("userName", str_userName.toLowerCase());
                     map.put("fullName", str_fullName);

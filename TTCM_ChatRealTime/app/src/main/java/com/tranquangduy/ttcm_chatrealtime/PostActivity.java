@@ -9,7 +9,10 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -87,13 +90,13 @@ public class PostActivity extends AppCompatActivity{
                 if(TextUtils.isEmpty(str_Description) && imagePostUri == null){
                     Toast.makeText(PostActivity.this, "Bạn chưa chọn ảnh hoặc viết trạng thái", Toast.LENGTH_SHORT).show();
                     edtDescription.setText("");
+
                 }else {
                     postImage();
                 }
 
             }
         });
-
 
 
     }

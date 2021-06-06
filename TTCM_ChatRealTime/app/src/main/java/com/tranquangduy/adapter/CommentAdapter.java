@@ -28,19 +28,19 @@ import com.tranquangduy.fragments.OnItemClickRecycleView;
 import com.tranquangduy.model.Comment;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.MainActivity;
+import com.tranquangduy.ttcm_chatrealtime.ProfileActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.List;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
-    private List<Comment> mComment;
+    private final List<Comment> mComment;
     private Context mContext;
-    private String mPostID;
-    private OnItemClickRecycleView onItemClickRecycle;
-    private FirebaseUser firebaseUser;
+    private final String mPostID;
 
-    boolean check = false;
+    private FirebaseUser firebaseUser;
+    private boolean check = false;
 
     public CommentAdapter(List<Comment> mComment, Context mContext, String mPostID) {
         this.mComment = mComment;
@@ -69,8 +69,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         holder.txtUserName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, MainActivity.class);
-                intent.putExtra("publisherID", comment.getPublisher());
+                Intent intent = new Intent(mContext, ProfileActivity.class);
+                intent.putExtra("profileID", comment.getPublisher());
                 mContext.startActivity(intent);
             }
         });
@@ -78,8 +78,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         holder.imgAvt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, MainActivity.class);
-                intent.putExtra("publisherID", comment.getPublisher());
+                Intent intent = new Intent(mContext, ProfileActivity.class);
+                intent.putExtra("profileID", comment.getPublisher());
                 mContext.startActivity(intent);
 
             }
@@ -114,15 +114,20 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             @Override
             public void onClick(View v) {
                 v.setVisibility(View.GONE);
+                //set text trong file string xml hỗ trợ làm đa ngôn ngữ
+                String t1 = mContext.getString(R.string.confim_deleto);
+                String t2 = mContext.getString(R.string.delete);
+                String t3 = mContext.getString(R.string.cancel);
+                String t4 = mContext.getString(R.string.deleted);
                 AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
-                alertDialog.setTitle("Bạn chắc chắn muốn xoá bình luận này?");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Huỷ",
+                alertDialog.setTitle(t1);
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, t3,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                             }
                         });
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Xoá",
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, t2,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 FirebaseDatabase.getInstance().getReference("Comments")
@@ -131,7 +136,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            Toast.makeText(mContext, "Đã xoá!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(mContext, t4, Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });

@@ -70,14 +70,13 @@ public class MessageActivity extends AppCompatActivity {
     EditText editContentMessage;
     RecyclerView recyclerViewMessage;
 
-    MessageAdapter messageAdapter;
-    List<Message> listMessage = new ArrayList<>();
+    private MessageAdapter messageAdapter;
+    private List<Message> listMessage;
 
     private Uri imageUri;
     private StorageReference storageReference;
     private UploadTask uploadTask;
 
-    private Intent intent = null;
     private User user = null;
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;
@@ -153,7 +152,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        intent = getIntent();
+        Intent intent = getIntent();
         if (intent != null) {
 
             if (intent.hasExtra("userid")) {
@@ -178,11 +177,11 @@ public class MessageActivity extends AppCompatActivity {
                 });
             }
 
-
+            String t = getString(R.string.only_me);
             user = (User) intent.getSerializableExtra("user_newChat");
             if (user != null) {
                 if (user.getId().equals(firebaseUser.getUid())) {
-                    txtUserName.setText("Chỉ có bạn");
+                    txtUserName.setText(t);
                 } else {
                     txtUserName.setText(user.getUserName());
                 }
@@ -193,7 +192,7 @@ public class MessageActivity extends AppCompatActivity {
             } else if (!intent.hasExtra("userid")) {
                 user = (User) intent.getSerializableExtra("user_message");
                 if (user.getId().equals(firebaseUser.getUid())) {
-                    txtUserName.setText("Chỉ có bạn");
+                    txtUserName.setText(t);
                 } else {
                     txtUserName.setText(user.getUserName());
                 }
@@ -327,8 +326,8 @@ public class MessageActivity extends AppCompatActivity {
 
 
     private void readMessage(String myID, String userID, String imgURL) {
+        listMessage = new ArrayList<>();
         reference = FirebaseDatabase.getInstance().getReference("Chats");
-
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -361,9 +360,10 @@ public class MessageActivity extends AppCompatActivity {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
 
         if (!userid.equals(firebaseUser.getUid())) {
+            String t = getString(R.string.notification_send_text);
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("userid", firebaseUser.getUid());
-            hashMap.put("text", "đã gửi cho bạn 1 tin nhắn");
+            hashMap.put("text", t);
             hashMap.put("postid", "");
             hashMap.put("ispost", Boolean.FALSE);
             reference.push().setValue(hashMap);
@@ -436,8 +436,6 @@ public class MessageActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
             sendMessageImage(firebaseUser.getUid(), user.getId());
-        } else {
-            Toast.makeText(this, "Không có ảnh được chọn!", Toast.LENGTH_SHORT).show();
         }
 
     }

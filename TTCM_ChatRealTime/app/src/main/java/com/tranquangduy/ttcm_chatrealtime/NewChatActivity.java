@@ -41,8 +41,8 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
     List<User> listUser;
     UserAdapter userAdapter;
 
-    FirebaseUser firebaseUser;
-    DatabaseReference reference;
+    private FirebaseUser firebaseUser;
+    private DatabaseReference reference;
 
 
     @Override

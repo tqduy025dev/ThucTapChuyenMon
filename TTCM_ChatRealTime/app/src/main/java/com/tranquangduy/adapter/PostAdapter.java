@@ -26,6 +26,7 @@ import com.tranquangduy.model.Post;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.CommentActivity;
 import com.tranquangduy.ttcm_chatrealtime.MoreStatusActivity;
+import com.tranquangduy.ttcm_chatrealtime.ProfileActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.ArrayList;
@@ -36,11 +37,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder>{
     public static final String PREF = "MyPreferences";
-    Context mContext;
+    private final Context mContext;
     List<Post> mPost;
-    ArrayList<String> listIDLiked;
-    ArrayList<User> listUserLiked;
-    UserAdapter userAdapter;
 
     private FirebaseUser firebaseUser;
 
@@ -89,7 +87,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 if (holder.imgLike.getTag().equals("like")) {
                     FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                             .child(firebaseUser.getUid()).setValue(true);
-                    addNotification(post.getPublisher(), post.getPostid());
+                    if(!post.getPublisher().equals(firebaseUser.getUid())){
+                        addNotification(post.getPublisher(), post.getPostid());
+                    }
                 } else {
                     FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                             .child(firebaseUser.getUid()).removeValue();
@@ -115,12 +115,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.imgAvt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor editor = mContext.getSharedPreferences(PREF, MODE_PRIVATE).edit();
-                editor.putString("profileID", post.getPublisher());
-                editor.apply();
-
-                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new FragmentProfile()).commit();
+                Intent intent = new Intent(mContext, ProfileActivity.class);
+                intent.putExtra("profileID", post.getPublisher());
+                mContext.startActivity(intent);
             }
         });
 
@@ -201,7 +198,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         HashMap<String, Object> map = new HashMap<>();
         map.put("userid", firebaseUser.getUid());
-        map.put("text", "đã thích ảnh của bạn");
+        map.put("text", "Đã thích ảnh của bạn");
         map.put("postid", postid);
         map.put("ispost", Boolean.TRUE);
 

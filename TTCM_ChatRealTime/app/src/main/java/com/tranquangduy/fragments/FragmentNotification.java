@@ -28,8 +28,9 @@ import java.util.List;
 
 public class FragmentNotification extends Fragment {
     RecyclerView recyclerView;
-    List<Notification> listNotification;
-    NotificationAdapter notificationAdapter;
+
+    private List<Notification> listNotification;
+    private NotificationAdapter notificationAdapter;
 
 
 

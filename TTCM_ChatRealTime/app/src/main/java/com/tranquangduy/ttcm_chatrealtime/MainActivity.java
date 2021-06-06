@@ -40,13 +40,18 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
-    Fragment selectedfragment = null;
-    public static final String PREF = "MyPreferences";
 
+    private Fragment selectedfragment = null;
+    public static final String PREF = "MyPreferences";
 
     private DatabaseReference reference;
     private FirebaseUser firebaseUser;
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,31 +59,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         linkView();
-        getData();// get từ database
-        loadData(); // load từ các activity, fragment
 
-    }
-
-    private void loadData() {
-        Bundle intent = getIntent().getExtras();
-        if(intent != null){
-            String publisherID = intent.getString("publisherID");
-
-            SharedPreferences myPreferences = getSharedPreferences(PREF, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = myPreferences.edit();
-            editor.putString("profileID", publisherID);
-            editor.apply();
-
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentProfile()).commit();
+        if (firebaseUser == null) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }else {
+            getData();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentHome()).commit();
         }
 
-
-
     }
 
-    private void getData(){
+
+    private void getData() {
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -102,8 +96,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
     }
 
 
@@ -112,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(onNavigationItemReselectedListener);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemReselectedListener
@@ -152,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void status(String status){
+    private void status(String status) {
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
 
         HashMap<String, Object> map = new HashMap<>();

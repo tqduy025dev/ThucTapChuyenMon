@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_toEndOf="@+id/img_post_close"
-                    android:text="Tạo bài viết"
+                    android:text="@string/new_post"
                     android:textColor="@color/black"
                     android:textSize="17dp" />
 
@@ -47,7 +47,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
-                    android:text="ĐĂNG"
+                    android:text="@string/add_post"
                     android:textColor="@color/chat_right"
                     android:textSize="16sp" />
 
@@ -79,7 +79,7 @@
             android:layout_height="40dp"
             android:background="@android:color/transparent"
             android:layout_marginTop="15dp"
-            android:hint="Bạn viết gì đi..."
+            android:hint="@string/post_note"
             android:maxLines="5" />
 
     </LinearLayout>
@@ -95,7 +95,7 @@
             android:layout_marginTop="3dp"
             android:layout_marginStart="10dp"
             android:textSize="17dp"
-            android:text="Thêm vào bài viết của bạn"/>
+            android:text="@string/add_postImg"/>
 
         <ImageView
             android:id="@+id/imgAdd_post_image"

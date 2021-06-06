@@ -159,9 +159,11 @@ public class CommentActivity extends AppCompatActivity {
         hashMap.put("comment", edtComment.getText().toString());
         hashMap.put("publisher", firebaseUser.getUid());
         hashMap.put("commentid", commentid);
-
         reference.child(commentid).setValue(hashMap);
-        addNotification(postID);
+        
+        if(!publisherID.equals(firebaseUser.getUid())){
+            addNotification(postID);
+        }
         edtComment.setText("");
 
     }

@@ -26,7 +26,7 @@
             android:layout_gravity="center"
             android:textStyle="bold"
             android:gravity="center"
-            android:text="Chỉnh sửa trang cá nhân"/>
+            android:text="@string/edit_profile"/>
         <ImageButton
             android:id="@+id/btn_editProfile_accept"
             android:layout_weight="0.5"
@@ -51,7 +51,7 @@
             android:layout_marginStart="7dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Họ tên"/>
+            android:text="@string/fullname"/>
         <EditText
             android:id="@+id/edt_editProfile_fullName"
             android:layout_width="match_parent"
@@ -61,7 +61,7 @@
             android:layout_marginStart="7dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tên người dùng"/>
+            android:text="@string/usernane"/>
         <EditText
             android:id="@+id/edt_editProfile_userName"
             android:layout_width="match_parent"
@@ -71,7 +71,7 @@
             android:layout_marginStart="7dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tiểu sử"/>
+            android:text="@string/bio"/>
         <EditText
             android:id="@+id/edt_editProfile_bio"
             android:layout_width="match_parent"
@@ -81,7 +81,7 @@
             android:layout_marginStart="7dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Trang web"/>
+            android:text="@string/webpage"/>
         <EditText
             android:id="@+id/edt_editProfile_webpage"
             android:layout_width="match_parent"

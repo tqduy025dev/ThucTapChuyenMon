@@ -51,9 +51,9 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
     ImageView imgAddChat;
     RecyclerView recyclerView;
 
-    List<User> mUser;
-    UserAdapter userAdapter;
-    List<ChatList> listChat;
+    private List<User> mUser;
+    private UserAdapter userAdapter;
+    private List<ChatList> listChat;
 
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;

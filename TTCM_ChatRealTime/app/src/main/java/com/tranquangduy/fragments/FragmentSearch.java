@@ -1,5 +1,7 @@
 package com.tranquangduy.fragments;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,18 +33,22 @@ import com.tranquangduy.adapter.UserAdapter;
 import com.tranquangduy.model.Message;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.MainActivity;
+import com.tranquangduy.ttcm_chatrealtime.ProfileActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class FragmentSearch extends Fragment implements OnItemClickRecycleView {
+    public static final String PREF = "MyPreferences";
     RecyclerView recyclerView;
     EditText searchUser;
-    UserAdapter userAdapter;
-    List<User> listUser = new ArrayList<>();
 
-    FirebaseUser firebaseUser;
+    private UserAdapter userAdapter;
+    private List<User> listUser;
+
 
     @Nullable
     @Override
@@ -58,8 +65,8 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView {
     }
 
     private void getData() {
+        listUser = new ArrayList<>();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -89,7 +96,6 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     private void addEvent() {
@@ -140,7 +146,9 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView {
 
     @Override
     public void onItemClick(int position) {
-
+        Intent intent = new Intent(getActivity(), ProfileActivity.class);
+        intent.putExtra("profileID", listUser.get(position).getId());
+        startActivity(intent);
     }
 
     @Override
