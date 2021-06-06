@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ public class FragmentHome extends Fragment {
     ImageView imgViewAvt;
     Button btnAddPost;
     TextView txtHome;
+    ProgressBar progressHome;
     RecyclerView recyclerViewPost;
 
     private List<Post> listPost;
@@ -109,6 +111,7 @@ public class FragmentHome extends Fragment {
                         }
                     }
                 }
+                progressHome.setVisibility(View.GONE);
                 postAdapter.notifyDataSetChanged();
             }
 
@@ -135,6 +138,7 @@ public class FragmentHome extends Fragment {
         imgViewAvt = view.findViewById(R.id.imgView_home_Avt);
         btnAddPost = view.findViewById(R.id.btn_home_post);
         txtHome = view.findViewById(R.id.txt_home_main);
+        progressHome = view.findViewById(R.id.progress_home);
         recyclerViewPost = view.findViewById(R.id.recyclerView_post);
         recyclerViewPost.setHasFixedSize(true);
         recyclerViewPost.setLayoutManager(new LinearLayoutManager(getContext()));

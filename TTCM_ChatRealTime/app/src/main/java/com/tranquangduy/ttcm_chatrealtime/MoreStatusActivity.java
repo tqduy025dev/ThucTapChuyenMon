@@ -131,12 +131,14 @@ public class MoreStatusActivity extends AppCompatActivity implements OnItemClick
 
     }
 
+
+
     private void getLike() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Likes")
                 .child(id);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listID.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     listID.add(snapshot.getKey());
@@ -145,7 +147,7 @@ public class MoreStatusActivity extends AppCompatActivity implements OnItemClick
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -157,7 +159,7 @@ public class MoreStatusActivity extends AppCompatActivity implements OnItemClick
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listUser.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     User user = snapshot.getValue(User.class);
@@ -170,7 +172,7 @@ public class MoreStatusActivity extends AppCompatActivity implements OnItemClick
                 userAdapter.notifyDataSetChanged();
             }
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -183,7 +185,9 @@ public class MoreStatusActivity extends AppCompatActivity implements OnItemClick
 
     @Override
     public void onItemClick(int position) {
-
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("profileID", listUser.get(position).getId());
+        startActivity(intent);
     }
 
     @Override

@@ -29,6 +29,7 @@ import android.os.UserHandle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,9 +65,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.tranquangduy.model.Post;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.LoginActivity;
 import com.tranquangduy.ttcm_chatrealtime.MainActivity;
+import com.tranquangduy.ttcm_chatrealtime.MoreStatusActivity;
 import com.tranquangduy.ttcm_chatrealtime.PostActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
@@ -141,6 +144,26 @@ public class FragmentProfile extends Fragment {
         });
 
 
+        DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference("Posts");
+        reference2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int dem = 0;
+                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    Post post = dataSnapshot.getValue(Post.class);
+                    if(post.getPublisher().equals(firebaseUser.getUid())){
+                        dem++;
+                    }
+                }
+
+                txtPost.setText(String.valueOf(dem));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
     }
@@ -200,7 +223,7 @@ public class FragmentProfile extends Fragment {
                 status("offline");
                 mAuth = FirebaseAuth.getInstance();
                 mAuth.signOut();
-                startActivity(new Intent(getContext(), LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                startActivity(new Intent(getContext(), LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }
         });
 
@@ -225,6 +248,26 @@ public class FragmentProfile extends Fragment {
                 }
 
 
+            }
+        });
+
+        txtFollowers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MoreStatusActivity.class);
+                intent.putExtra("id", firebaseUser.getUid());
+                intent.putExtra("title", "Người theo dõi");
+                startActivity(intent);
+            }
+        });
+
+        txtFollowing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MoreStatusActivity.class);
+                intent.putExtra("id", firebaseUser.getUid());
+                intent.putExtra("title", "Đang theo dõi");
+                startActivity(intent);
             }
         });
 

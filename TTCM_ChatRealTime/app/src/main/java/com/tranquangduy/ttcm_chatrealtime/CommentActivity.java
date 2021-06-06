@@ -160,7 +160,7 @@ public class CommentActivity extends AppCompatActivity {
         hashMap.put("publisher", firebaseUser.getUid());
         hashMap.put("commentid", commentid);
         reference.child(commentid).setValue(hashMap);
-        
+
         if(!publisherID.equals(firebaseUser.getUid())){
             addNotification(postID);
         }

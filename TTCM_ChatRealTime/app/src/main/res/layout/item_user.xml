@@ -47,6 +47,7 @@
                 android:id="@+id/txtItem_user_fullName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textFilter"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -60,12 +61,21 @@
 
         <Button
             android:textAllCaps="false"
-            android:id="@+id/btnItem_follow"
-            android:layout_width="match_parent"
+            android:id="@+id/btnItem_user_follow"
+            android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:background="@drawable/background_text"
             android:padding="5dp"/>
+
+        <ImageView
+            android:id="@+id/imgItem_user_delete"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_delete"
+            android:visibility="gone"
+            android:layout_gravity="center"/>
+
 
 
     </LinearLayout>

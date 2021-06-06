@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.tranquangduy.fragments.FragmentProfile;
+import com.tranquangduy.model.Post;
 import com.tranquangduy.model.User;
 
 import java.util.HashMap;
@@ -110,6 +111,30 @@ public class ProfileActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+
+
+        DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference("Posts");
+        reference2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int dem = 0;
+                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    Post post = dataSnapshot.getValue(Post.class);
+                    if(post.getPublisher().equals(userID)){
+                        dem++;
+                    }
+                }
+
+                txtPost.setText(String.valueOf(dem));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
     }
 
     private void addEvent() {

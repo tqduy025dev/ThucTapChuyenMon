@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -49,9 +50,12 @@ import java.util.Map;
 public class FragmentMessage extends Fragment implements OnItemClickRecycleView {
     EditText edtSearch;
     ImageView imgAddChat;
+    ImageView imgDelete;
     RecyclerView recyclerView;
 
-    private List<User> mUser;
+
+    private APIService apiService;
+    private List<User> listUser;
     private UserAdapter userAdapter;
     private List<ChatList> listChat;
 
@@ -62,7 +66,6 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
-
 
         linkView(view);
         getData();
@@ -134,13 +137,13 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                mUser.clear();
+                listUser.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     User user = dataSnapshot.getValue(User.class);
                     for (ChatList chatList : listChat) {
                         assert user != null;
                         if (user.getId().equals(chatList.getId())) {
-                            mUser.add(user);
+                            listUser.add(user);
                         }
                     }
                 }
@@ -152,32 +155,30 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
             }
         });
-        userAdapter = new UserAdapter(getContext(), mUser, false, true, true, this);
+        userAdapter = new UserAdapter(getContext(), listUser, false, true, true, this);
         recyclerView.setAdapter(userAdapter);
     }
 
     private void searchUsers(String s) {
         ArrayList<User> filterList = new ArrayList<>();
-        for (User user : mUser) {
+        for (User user : listUser) {
             if (user.getUserName().toLowerCase().contains(s)) {
                 filterList.add(user);
             }
         }
-        if(!filterList.isEmpty()){
-            userAdapter.filertListUser(filterList);
-        }
-
+        userAdapter.SEARCH_LISTUSER(filterList); // sử dụng interface
 
     }
 
     private void linkView(View view) {
         edtSearch = view.findViewById(R.id.search_message);
         imgAddChat = view.findViewById(R.id.img_addRoom);
+        imgDelete = view.findViewById(R.id.imgItem_user_delete);
         recyclerView = view.findViewById(R.id.recyclerView_messageUser);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mUser = new ArrayList<>();
+        listUser = new ArrayList<>();
         listChat = new ArrayList<>();
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -187,13 +188,18 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
     public void onItemClick(int position) {
         Intent intent = new Intent(getContext(), MessageActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        User user = mUser.get(position);
+        User user = listUser.get(position);
         intent.putExtra("user_message", user);
         startActivity(intent);
     }
 
     @Override
     public void onItemLongClick(int postition) {
-
+        // sử dụng interface để truyền dữ liệu cho userAdapter
+        userAdapter.UPDATE_USERID(listChat.get(postition).getId());
     }
+
+
+
+
 }

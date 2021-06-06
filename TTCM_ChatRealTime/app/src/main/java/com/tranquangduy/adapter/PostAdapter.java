@@ -1,19 +1,28 @@
 package com.tranquangduy.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,11 +41,11 @@ import com.tranquangduy.ttcm_chatrealtime.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder>{
-    public static final String PREF = "MyPreferences";
     private final Context mContext;
     List<Post> mPost;
 
@@ -154,10 +163,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
 
 
+        holder.imgMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                openMenu(post , v);
+
+            }
+        });
 
 
     }
+
+
+
+
+
 
     @Override
     public int getItemCount() {
@@ -167,12 +188,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
 
 
-    public class PostViewHolder extends RecyclerView.ViewHolder {
+    public class PostViewHolder extends RecyclerView.ViewHolder{
         ImageView imgAvt;
         ImageView imageViewPost;
         ImageView imgLike;
         ImageView imgSave;
         ImageView imgComment;
+        ImageView imgMenu;
         TextView txtUserName;
         TextView txtPostContent;
         TextView txtLikeCount;
@@ -180,7 +202,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
-
+            imgMenu = itemView.findViewById(R.id.imgItem_post_menu);
             imgAvt = itemView.findViewById(R.id.imgItem_Avt);
             imageViewPost = itemView.findViewById(R.id.imgViewItem_post);
             imgLike = itemView.findViewById(R.id.imgItem_like);
@@ -191,7 +213,128 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             txtLikeCount = itemView.findViewById(R.id.txtItem_post_likeCount);
             txtCommentCount = itemView.findViewById(R.id.txtItem_post_commentCount);
         }
+
+
     }
+
+
+    private void openMenu(Post post, View v){
+
+        PopupMenu popupMenu = new PopupMenu(mContext, v);
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.menu_delete :
+                        final String id = post.getPostid();
+                        FirebaseDatabase.getInstance().getReference("Posts")
+                                .child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    deleteNotification(id, firebaseUser.getUid());
+                                }
+                            }
+                        });
+                        return true;
+
+                    case R.id.menu_report :
+                        Toast.makeText(mContext, mContext.getString(R.string.report_post), Toast.LENGTH_SHORT).show();
+                        return true;
+
+                    case R.id.menu_edit_post :
+                        editPost(post.getPostid());
+
+                    default: return false;
+                }
+            }
+        });
+
+        popupMenu.inflate(R.menu.menu_edit_post);
+        if (!post.getPublisher().equals(firebaseUser.getUid())){
+            popupMenu.getMenu().findItem(R.id.menu_delete).setVisible(false);
+            popupMenu.getMenu().findItem(R.id.menu_edit_post).setVisible(false);
+        }
+        popupMenu.show();
+
+
+    }
+
+
+    private void editPost(final String postID){
+        AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+        alertDialog.setTitle(mContext.getString(R.string.update_post));
+        final EditText editText = new EditText(mContext);
+        getTextPost(postID, editText);
+
+        alertDialog.setView(editText);
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, mContext.getString(R.string.update),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("description", editText.getText().toString());
+
+                        FirebaseDatabase.getInstance().getReference("Posts")
+                                .child(postID).updateChildren(map);
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, mContext.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+            }
+        });
+
+
+        alertDialog.show();
+    }
+
+    private void getTextPost(final String postID, final EditText editText) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts")
+                .child(postID);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                editText.setText(dataSnapshot.getValue(Post.class).getDescription());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+    private void deleteNotification(final String postID, String userID){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userID);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    if (Objects.equals(snapshot.child("postid").getValue(), postID)){
+                        dataSnapshot.getRef().removeValue()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(mContext, "Đã xoá", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+
+    }
+
+
 
     private void addNotification(String userid, String postid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
@@ -214,7 +357,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-                Glide.with(mContext).load(user.getImageUrl()).into(imgAvt);
+                Glide.with(mContext.getApplicationContext()).load(user.getImageUrl()).into(imgAvt);
                 userName.setText(user.getUserName());
             }
 
@@ -305,10 +448,5 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
 
     }
-
-
-
-
-
 
 }

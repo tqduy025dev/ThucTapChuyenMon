@@ -40,10 +40,14 @@
     <string name="notification_send_text">Đã gửi cho bạn 1 tin nhắn</string>
     <string name="notification_follow">Đang bắt đầu theo dõi bạn</string>
     <string name="only_me">Chỉ có bạn</string>
-    <string name="confim_deleto">Bạn chắc chắn muốn xoá bình luận này?</string>
+    <string name="confim_deleto">Bạn chắc chắn muốn xoá ?</string>
     <string name="delete">Xoá</string>
+    <string name="report">Báo cáo</string>
     <string name="deleted">Đã xoá</string>
     <string name="cancel">Huỷ</string>
+    <string name="update">Sửa</string>
+    <string name="update_post">Sửa bài viết</string>
+    <string name="report_post">Chúng tôi đã ghi nhận báo cáo của bạn</string>
     <string name="check_email">Vui lòng nhập địa chỉ Email</string>
     <string name="check_mailbox">Vui lòng kiểm tra hộp thư của bạn!</string>
     <string name="text_fogot_pass">Chúng tôi đã gửi yêu cầu đến tài khoản email của bạn. Vui lòng kiểm tra trong hộp thư đến và quay lại đăng nhập</string>
