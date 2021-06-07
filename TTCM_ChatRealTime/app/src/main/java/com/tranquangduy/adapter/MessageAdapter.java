@@ -90,7 +90,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
 
         if(getItemViewType(position) == MSG_TYPE_RIGHT){
-            if(position == mMessage.size() -1){
+            if(position == getItemCount() -1){
                 if(msg.getIsseen()){
                     holder.txtIsseen.setText("đã xem");
                 }else {

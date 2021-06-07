@@ -47,6 +47,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
@@ -65,6 +67,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.tranquangduy.adapter.PhotoAdapter;
 import com.tranquangduy.model.Post;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.LoginActivity;
@@ -79,7 +82,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
@@ -91,10 +97,14 @@ public class FragmentProfile extends Fragment {
     ImageView imgViewAvt, imgBack;
     TextView txtPost, txtFollowers, txtFollowing;
     TextView txtUserName, txtBio, txtBarProfile, txtWebpage;
+    RecyclerView recyclerViewPhoTo;
+    RecyclerView recyclerViewSave;
 
     private StorageReference storageReference;
     private Uri imageUri;
     private UploadTask uploadTask;
+    private List<Post> listPost;
+    private PhotoAdapter photoAdapter;
 
     private User user;
     private FirebaseAuth mAuth;
@@ -110,6 +120,7 @@ public class FragmentProfile extends Fragment {
         getUser();
         addEvent();
         getFollowPost();
+        myFotos();
 
         return view;
 
@@ -208,6 +219,13 @@ public class FragmentProfile extends Fragment {
         txtWebpage = view.findViewById(R.id.txt_profile_webpage);
         btnFollow = view.findViewById(R.id.btn_profile_follow);
         imgBack = view.findViewById(R.id.img_profile_back);
+        recyclerViewPhoTo = view.findViewById(R.id.recyclerView_photo);
+        recyclerViewPhoTo.setHasFixedSize(true);
+        recyclerViewPhoTo.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerViewSave = view.findViewById(R.id.recyclerView_save);
+        recyclerViewSave.setHasFixedSize(true);
+        recyclerViewSave.setLayoutManager(new LinearLayoutManager(getContext()));
+
 
         storageReference = FirebaseStorage.getInstance().getReference("Uploads");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -284,6 +302,31 @@ public class FragmentProfile extends Fragment {
             });
 
 
+    }
+
+        private void myFotos(){
+        listPost = new ArrayList<>();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                listPost.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Post post = snapshot.getValue(Post.class);
+                    if (post.getPublisher().equals(firebaseUser.getUid())){
+                        listPost.add(post);
+                    }
+                }
+                Collections.reverse(listPost);
+                photoAdapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+        photoAdapter = new PhotoAdapter(getContext(), listPost);
+        recyclerViewPhoTo.setAdapter(photoAdapter);
     }
 
 

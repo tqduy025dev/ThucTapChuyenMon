@@ -63,13 +63,14 @@
         <EditText
             android:id="@+id/txt_comment_addComment"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_toRightOf="@id/img_comment_avt"
             android:hint="Viết bình luận..."
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:paddingStart="10dp"
+            android:minHeight="30dp"
             android:background="@drawable/background_text"
             android:layout_toLeftOf="@id/img_comment_send"/>
 

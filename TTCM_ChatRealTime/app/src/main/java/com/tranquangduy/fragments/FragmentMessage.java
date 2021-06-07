@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -49,12 +50,10 @@ import java.util.Map;
 
 public class FragmentMessage extends Fragment implements OnItemClickRecycleView {
     EditText edtSearch;
-    ImageView imgAddChat;
+    ImageButton imgAddChat;
     ImageView imgDelete;
     RecyclerView recyclerView;
 
-
-    private APIService apiService;
     private List<User> listUser;
     private UserAdapter userAdapter;
     private List<ChatList> listChat;
@@ -166,7 +165,10 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
                 filterList.add(user);
             }
         }
-        userAdapter.SEARCH_LISTUSER(filterList); // sử dụng interface
+
+            userAdapter.SEARCH_LISTUSER(filterList); // sử dụng interface
+
+
 
     }
 

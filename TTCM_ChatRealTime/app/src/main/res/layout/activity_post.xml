@@ -76,35 +76,42 @@
         <EditText
             android:id="@+id/txt_post_description"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:layout_marginTop="15dp"
+            android:gravity="top|start"
             android:hint="@string/post_note"
-            android:maxLines="5" />
+            android:maxLines="20" />
 
     </LinearLayout>
 
-    <RelativeLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:layout_marginStart="10dp"
-            android:textSize="17dp"
-            android:text="@string/add_postImg"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/imgAdd_post_image"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_image"
-            android:layout_alignParentEnd="true"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginStart="10dp"
+                android:textSize="17dp"
+                android:text="@string/add_postImg"/>
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/imgAdd_post_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_image"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
 
 </RelativeLayout>

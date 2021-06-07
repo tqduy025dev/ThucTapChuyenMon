@@ -188,7 +188,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         ImageView imgStatus;
         ImageView imgDelete;
         OnItemClickRecycleView onItemClickRecycleViewHolder;
-
+        boolean check = false;
         public UserViewHolder(@NonNull View itemView, OnItemClickRecycleView onItemClickRecycleViewHolder) {
             super(itemView);
             this.onItemClickRecycleViewHolder = onItemClickRecycleViewHolder;
@@ -210,7 +210,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         @Override
         public boolean onLongClick(View v) {
             onItemClickRecycleViewHolder.onItemLongClick(getAdapterPosition());
-            imgDelete.setVisibility(View.VISIBLE);
+            if(isMessage){
+                if(!check){
+                    imgDelete.setVisibility(View.VISIBLE);
+                    check = true;
+                }else {
+                    imgDelete.setVisibility(View.GONE);
+                    check = false;
+                }
+            }else {
+                imgDelete.setVisibility(View.GONE);
+            }
+
+
             return true;
         }
     }
@@ -228,23 +240,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             }
         });
 
-//        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Chats");
-//        reference1.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    Message msg = dataSnapshot.getValue(Message.class);
-//                    if (msg.getSender().equals(firebaseUser.getUid()) && msg.getReceiver().equals(chatListID) ||
-//                            msg.getSender().equals(chatListID) && msg.getReceiver().equals(firebaseUser.getUid())) {
-//                            reference1.getKey();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//            }
-//        });
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Chats").child(firebaseUser.getUid());
+        reference1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Message msg = dataSnapshot.getValue(Message.class);
+                    if (msg.getSender().equals(firebaseUser.getUid()) && msg.getReceiver().equals(chatListID) ||
+                            msg.getSender().equals(chatListID) && msg.getReceiver().equals(firebaseUser.getUid())) {
+                            dataSnapshot.getRef().removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
 
     }
 
@@ -285,7 +297,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     private void checkLastMessage(String userID, TextView txt_lastMessage) {
         theLastMessage = "deFauLt"; // cố tình sai format để tránh trường hợp người dùng gửi tin nhắn đúng chữ default
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats").child(firebaseUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

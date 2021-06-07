@@ -54,7 +54,7 @@
         android:layout_below="@+id/bar" />
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageButton
         android:id="@+id/img_addRoom"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -63,7 +63,9 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:src="@drawable/ic_new_message"
+        android:scaleType="fitXY"
         android:padding="13dp"
+        style="?android:buttonStyle"
         android:background="@drawable/background_circle_blue" />
 
 

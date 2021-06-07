@@ -34,6 +34,8 @@ import com.tranquangduy.ttcm_chatrealtime.PostActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class FragmentHome extends Fragment {
@@ -111,6 +113,7 @@ public class FragmentHome extends Fragment {
                         }
                     }
                 }
+                Collections.reverse(listPost);
                 progressHome.setVisibility(View.GONE);
                 postAdapter.notifyDataSetChanged();
             }

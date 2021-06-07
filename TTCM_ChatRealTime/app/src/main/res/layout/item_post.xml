@@ -57,7 +57,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/txtItem_post_userName"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="2dp"
                 android:layout_toEndOf="@+id/imgItem_Avt"
                 android:text="time" />
 
@@ -73,6 +72,7 @@
                 android:id="@+id/txtItem_post_postContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="10dp"
                 android:text="nội dung trạng thái"

@@ -4,13 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,6 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     private Intent intent;
     private String userID;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +59,6 @@ public class ProfileActivity extends AppCompatActivity {
         getFollowPost();
 
 
-
-
-
     }
 
     private void getUser() {
@@ -67,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
+                user = snapshot.getValue(User.class);
 
                 Glide.with(getApplicationContext()).load(user.getImageUrl()).into(imgViewAvt);
                 txtUserName.setText(user.getFullName());
@@ -138,13 +140,13 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void addEvent() {
-        btnEditProfile.setVisibility(View.GONE);
         btnLogout.setVisibility(View.GONE);
 
         if(userID.equals(firebaseUser.getUid())){
             btnFollow.setVisibility(View.GONE);
             btnEditProfile.setVisibility(View.VISIBLE);
         }else {
+            btnEditProfile.setVisibility(View.GONE);
             btnFollow.setVisibility(View.VISIBLE);
         }
 
@@ -162,6 +164,33 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
 
+            }
+        });
+
+        txtFollowers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, MoreStatusActivity.class);
+                intent.putExtra("id", userID);
+                intent.putExtra("title", "Người theo dõi");
+                startActivity(intent);
+            }
+        });
+
+        txtFollowing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, MoreStatusActivity.class);
+                intent.putExtra("id", userID);
+                intent.putExtra("title", "Đang theo dõi");
+                startActivity(intent);
+            }
+        });
+
+        btnEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDiglogEditProfile(user);
             }
         });
 
@@ -217,6 +246,64 @@ public class ProfileActivity extends AppCompatActivity {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
+
+
+    private void openDiglogEditProfile(User user) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.custom_dialog);
+        dialog.setCanceledOnTouchOutside(false);
+
+        final ImageButton btnCancel = dialog.findViewById(R.id.btn_editProfile_cancel);
+        final ImageButton btnAccept = dialog.findViewById(R.id.btn_editProfile_accept);
+        final EditText edtUserName = dialog.findViewById(R.id.edt_editProfile_userName);
+        final ImageView imgAvt = dialog.findViewById(R.id.img_editProfile_avatar);
+        final EditText edtFullName = dialog.findViewById(R.id.edt_editProfile_fullName);
+        final EditText edtBio = dialog.findViewById(R.id.edt_editProfile_bio);
+        final EditText edtWebpage = dialog.findViewById(R.id.edt_editProfile_webpage);
+
+        edtFullName.setText(user.getFullName());
+        edtUserName.setText(user.getUserName());
+        edtBio.setText(user.getBio());
+        edtWebpage.setText(user.getWebpage());
+        Glide.with(getApplicationContext()).load(user.getImageUrl()).into(imgAvt);
+
+
+        btnAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(edtFullName.getText().toString()) || TextUtils.isEmpty(edtUserName.getText().toString())) {
+                    Toast.makeText(ProfileActivity.this, "Không được bỏ trống họ tên và tên người dùng! ", Toast.LENGTH_SHORT).show();
+                } else {
+                    String str_userName = edtUserName.getText().toString();
+                    String str_fullName = edtFullName.getText().toString();
+                    String str_bio = edtBio.getText().toString();
+                    String str_webpage = edtWebpage.getText().toString();
+
+                    reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("userName", str_userName.toLowerCase());
+                    map.put("fullName", str_fullName);
+                    map.put("bio", str_bio);
+                    map.put("webpage", str_webpage);
+                    reference.updateChildren(map);
+                    dialog.dismiss();
+                }
+
+            }
+        });
+
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+        dialog.show();
+    }
 
 
     private void addNotification() {

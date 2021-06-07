@@ -284,9 +284,9 @@ public class MessageActivity extends AppCompatActivity {
 
 
     private void seenMessage(String userID) {
-        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats").child(userID);
 
-        seenListener = reference.addValueEventListener(new ValueEventListener() {
+        seenListener =  reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -317,7 +317,8 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("type", "text");
         hashMap.put("isseen", Boolean.FALSE);
         hashMap.put("time", ServerValue.TIMESTAMP);
-        reference.child("Chats").push().setValue(hashMap);
+        reference.child("Chats").child(sender).push().setValue(hashMap);
+        reference.child("Chats").child(receiver).push().setValue(hashMap);
 
         reference.child("ChatList").child(firebaseUser.getUid()).child(user.getId()).child("id").setValue(user.getId());
         reference.child("ChatList").child(user.getId()).child(firebaseUser.getUid()).child("id").setValue(firebaseUser.getUid());
@@ -327,7 +328,7 @@ public class MessageActivity extends AppCompatActivity {
 
     private void readMessage(String myID, String userID, String imgURL) {
         listMessage = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference = FirebaseDatabase.getInstance().getReference("Chats").child(myID);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
