@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.tranquangduy.ttcm_chatrealtime">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -13,17 +14,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TTCM_ChatRealTime">
-        <activity android:name=".ProfileActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" ></activity>
-        <activity android:name=".MoreStatusActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+        <activity
+            android:name=".ProfileActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
+        <activity
+            android:name=".MoreStatusActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".CommentActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".PostActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ResetPasswordActivity"
             android:parentActivityName=".LoginActivity"
@@ -40,9 +43,7 @@
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-
-        </activity>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
@@ -55,7 +56,7 @@
         </activity>
 
         <service
-            android:name="com.tranquangduy.notifications.MyFirebaseMessaging"
+            android:name="com.tranquangduy.push_notifications.MyFirebaseMessaging"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -12,12 +12,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,7 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.adapter.UserAdapter;
-import com.tranquangduy.fragments.OnItemClickRecycleView;
+import com.tranquangduy.control.OnItemClickRecycleView;
 import com.tranquangduy.model.User;
 
 import java.util.ArrayList;
@@ -147,7 +143,7 @@ public class NewChatActivity extends AppCompatActivity implements OnItemClickRec
         Intent intent = new Intent(NewChatActivity.this, MessageActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         User user = listUser.get(position);
-        intent.putExtra("user_newChat", user);
+        intent.putExtra("user_message", user);
         startActivity(intent);
 
     }

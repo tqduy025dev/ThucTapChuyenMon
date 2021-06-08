@@ -24,14 +24,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tranquangduy.fragments.APIService;
-import com.tranquangduy.fragments.FragmentMessage;
-import com.tranquangduy.fragments.OnItemClickRecycleView;
+import com.tranquangduy.control.APIService;
+import com.tranquangduy.control.OnItemClickRecycleView;
 import com.tranquangduy.model.Message;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -268,6 +266,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", t);
         hashMap.put("postid", "");
+        hashMap.put("ismessage", Boolean.FALSE);
         hashMap.put("ispost", Boolean.FALSE);
         reference.push().setValue(hashMap);
     }

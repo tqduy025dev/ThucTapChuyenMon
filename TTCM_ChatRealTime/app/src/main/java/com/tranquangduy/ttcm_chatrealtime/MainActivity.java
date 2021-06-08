@@ -2,7 +2,7 @@ package com.tranquangduy.ttcm_chatrealtime;
 
 import androidx.annotation.NonNull;
 
-import androidx.annotation.Nullable;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -10,11 +10,16 @@ import androidx.fragment.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,6 +28,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.tranquangduy.fragments.FragmentHome;
 import com.tranquangduy.fragments.FragmentProfile;
 import com.tranquangduy.fragments.FragmentMessage;
@@ -30,12 +38,12 @@ import com.tranquangduy.fragments.FragmentNotification;
 import com.tranquangduy.fragments.FragmentSearch;
 import com.tranquangduy.model.User;
 
-import java.util.Collection;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -57,6 +65,37 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReferenceFromUrl("https://firebasestorage.googleapis.com/v0/b/chatrealtimeandroid.appspot.com/o/PostImage%2F1623113007526.jpg?alt=media&token=21000adb-d41e-47a0-ad49-46835ade44f6");
+
+        try {
+            File localFile = File.createTempFile("images", "jpg");
+            File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/DEMO/");
+            dir.mkdir();
+            File file = new File(dir, "HHHHHHHHHH.jpg");
+
+            storageReference.getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Log.d("LOGGGGGGGGGG: ", file + "");
+                    t
+
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(MainActivity.this, "EROOOO", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
 
         linkView();
 
@@ -106,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemReselectedListener
+    private final BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemReselectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {

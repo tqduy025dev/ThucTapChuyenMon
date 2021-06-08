@@ -33,20 +33,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tranquangduy.adapter.MessageAdapter;
-import com.tranquangduy.fragments.APIService;
+import com.tranquangduy.control.APIService;
 import com.tranquangduy.model.Message;
 import com.tranquangduy.model.User;
 
@@ -100,7 +97,7 @@ public class MessageActivity extends AppCompatActivity {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            finish();
+                finish();
             }
         });
 
@@ -151,6 +148,9 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
+    // lấy dữ liệu từ 3 phía 1 cái từ intent gửi id của notifi
+    // 1 cái của click fragment message
+    //1 cái của new chat
     private void getData() {
         Intent intent = getIntent();
         if (intent != null) {
@@ -167,19 +167,16 @@ public class MessageActivity extends AppCompatActivity {
                         txtUserName.setText(user.getUserName());
 
                         readMessage(firebaseUser.getUid(), userIDNotification, user.getImageUrl());
-                        seenMessage(user.getId());
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
             }
 
             String t = getString(R.string.only_me);
-            user = (User) intent.getSerializableExtra("user_newChat");
-            if (user != null) {
+            user = (User) intent.getSerializableExtra("user_message");
+            if(user != null){
                 if (user.getId().equals(firebaseUser.getUid())) {
                     txtUserName.setText(t);
                 } else {
@@ -187,22 +184,9 @@ public class MessageActivity extends AppCompatActivity {
                 }
 
                 Glide.with(getApplicationContext()).load(user.getImageUrl()).into(imgAvt);
-                readMessage(firebaseUser.getUid(), user.getId(), user.getImageUrl());
-                seenMessage(user.getId());
-            } else if (!intent.hasExtra("userid")) {
-                user = (User) intent.getSerializableExtra("user_message");
-                if (user.getId().equals(firebaseUser.getUid())) {
-                    txtUserName.setText(t);
-                } else {
-                    txtUserName.setText(user.getUserName());
-                }
-                Glide.with(getApplicationContext()).load(user.getImageUrl()).into(imgAvt);
 
                 readMessage(firebaseUser.getUid(), user.getId(), user.getImageUrl());
-                seenMessage(user.getId());
             }
-
-
         }
 
     }
@@ -210,42 +194,44 @@ public class MessageActivity extends AppCompatActivity {
 
     private void getToken(String userID, String message) {
         SharedPreferences preferences = getSharedPreferences("MyPreferences", MODE_PRIVATE);
-        String userId = preferences.getString("mUserID", "");
-        String userName = preferences.getString("mUserName", "");
+        String myId = preferences.getString("mUserID", "");
+        String myName = preferences.getString("mUserName", "");
 
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(userID);
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        // nếu là chính mình thì khỏi push notifi
+        if(!userID.equals(firebaseUser.getUid())){
+            reference = FirebaseDatabase.getInstance().getReference("Users").child(userID);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                String token = snapshot.child("token").getValue().toString();
-                if (token.equals("")) {
-                    return;
+                    String token = snapshot.child("token").getValue().toString();
+                    if (token.equals("")) {
+                        return;
+                    }
+                    JSONObject to = new JSONObject();
+                    JSONObject data = new JSONObject();
+                    try {
+                        data.put("title", myName);
+                        data.put("message", message);
+                        data.put("id", myId);
+
+                        to.put("to", token);
+                        to.put("data", data);
+
+
+                        sendNotification(to);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
-                JSONObject to = new JSONObject();
-                JSONObject data = new JSONObject();
-                try {
-                    data.put("title", userName);
-                    data.put("message", message);
-                    data.put("id", userId);
 
-                    to.put("to", token);
-                    to.put("data", data);
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-                    sendNotification(to);
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
+            });
+        }
     }
 
 
@@ -283,30 +269,6 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-    private void seenMessage(String userID) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats").child(userID);
-
-        seenListener =  reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Message msg = dataSnapshot.getValue(Message.class);
-                    if (msg.getReceiver().equals(firebaseUser.getUid()) && msg.getSender().equals(userID)) {
-                        HashMap<String, Object> map = new HashMap<>();
-                        map.put("isseen", Boolean.TRUE);
-                        dataSnapshot.getRef().updateChildren(map);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-
     private void sendMessage(final String sender, final String receiver, String message) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
@@ -317,9 +279,14 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("type", "text");
         hashMap.put("isseen", Boolean.FALSE);
         hashMap.put("time", ServerValue.TIMESTAMP);
-        reference.child("Chats").child(sender).push().setValue(hashMap);
-        reference.child("Chats").child(receiver).push().setValue(hashMap);
-
+        // gửi cho chính mình :)) thì gửi 1 cái thôi
+        if(sender.equals(receiver)){
+            reference.child("Chats").child(sender).push().setValue(hashMap);
+        }else {
+            reference.child("Chats").child(sender).push().setValue(hashMap);
+            reference.child("Chats").child(receiver).push().setValue(hashMap);
+        }
+        // chat list này khỏi cần if vì key trùng nên tự update dc
         reference.child("ChatList").child(firebaseUser.getUid()).child(user.getId()).child("id").setValue(user.getId());
         reference.child("ChatList").child(user.getId()).child(firebaseUser.getUid()).child("id").setValue(firebaseUser.getUid());
 
@@ -352,6 +319,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+
         messageAdapter = new MessageAdapter(MessageActivity.this, listMessage, imgURL);
         recyclerViewMessage.setAdapter(messageAdapter);
 
@@ -366,6 +334,7 @@ public class MessageActivity extends AppCompatActivity {
             hashMap.put("userid", firebaseUser.getUid());
             hashMap.put("text", t);
             hashMap.put("postid", "");
+            hashMap.put("ismessage",Boolean.TRUE);
             hashMap.put("ispost", Boolean.FALSE);
             reference.push().setValue(hashMap);
         }
@@ -415,7 +384,14 @@ public class MessageActivity extends AppCompatActivity {
                         hashMap.put("type", "image");
                         hashMap.put("isseen", Boolean.FALSE);
                         hashMap.put("time", ServerValue.TIMESTAMP);
-                        reference.child("Chats").push().setValue(hashMap);
+                        // gửi cho chính mình :)) thì gửi 1 cái thôi
+                        if(sender.equals(receiver)){
+                            reference.child("Chats").child(sender).push().setValue(hashMap);
+                        }else {
+                            reference.child("Chats").child(sender).push().setValue(hashMap);
+                            reference.child("Chats").child(receiver).push().setValue(hashMap);
+                        }
+
 
                         reference.child("ChatList").child(firebaseUser.getUid()).child(user.getId()).child("id").setValue(user.getId());
                         reference.child("ChatList").child(user.getId()).child(firebaseUser.getUid()).child("id").setValue(firebaseUser.getUid());
@@ -446,15 +422,12 @@ public class MessageActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         status("online");
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        reference.removeEventListener(seenListener);
         status("offline");
 
     }
-
 }

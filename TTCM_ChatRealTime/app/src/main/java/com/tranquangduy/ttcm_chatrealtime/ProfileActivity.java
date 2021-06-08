@@ -272,7 +272,7 @@ public class ProfileActivity extends AppCompatActivity {
         btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(edtFullName.getText().toString()) || TextUtils.isEmpty(edtUserName.getText().toString())) {
+                if (TextUtils.isEmpty(edtFullName.getText().toString().trim()) || TextUtils.isEmpty(edtUserName.getText().toString().trim())) {
                     Toast.makeText(ProfileActivity.this, "Không được bỏ trống họ tên và tên người dùng! ", Toast.LENGTH_SHORT).show();
                 } else {
                     String str_userName = edtUserName.getText().toString();

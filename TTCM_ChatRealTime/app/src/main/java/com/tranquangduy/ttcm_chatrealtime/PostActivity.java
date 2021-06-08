@@ -52,7 +52,6 @@ public class PostActivity extends AppCompatActivity{
     private Uri imagePostUri = null;
 
     private FirebaseUser firebaseUser;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,6 +192,8 @@ public class PostActivity extends AppCompatActivity{
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
             imagePostUri = data.getData();
+
+            edtDescription.setText(imagePostUri + "");
 
             imgViewPost.setVisibility(View.VISIBLE);
             imgViewPost.setImageURI(imagePostUri);

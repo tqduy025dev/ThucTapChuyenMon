@@ -1,26 +1,28 @@
 package com.tranquangduy.adapter;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +32,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tranquangduy.fragments.FragmentProfile;
 import com.tranquangduy.model.Post;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.CommentActivity;
@@ -38,18 +39,16 @@ import com.tranquangduy.ttcm_chatrealtime.MoreStatusActivity;
 import com.tranquangduy.ttcm_chatrealtime.ProfileActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder>{
     private final Context mContext;
-    List<Post> mPost;
+    private List<Post> mPost;
 
     private FirebaseUser firebaseUser;
+    private ScaleGestureDetector scaleGestureDetector;
 
     public PostAdapter(Context mContext, List<Post> mPost) {
         this.mContext = mContext;
@@ -65,6 +64,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostAdapter.PostViewHolder holder, int position) {
+
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Post post = mPost.get(position);
@@ -172,11 +172,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             }
         });
 
+        holder.imageViewPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDiaLog(post.getPostimage());
+            }
+        });
+
+
+
+
 
     }
-
-
-
 
 
 
@@ -214,6 +221,29 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             txtCommentCount = itemView.findViewById(R.id.txtItem_post_commentCount);
         }
 
+
+    }
+
+    private  void openDiaLog(String imgURL){
+        final Dialog dialog = new Dialog(mContext);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.show_image_view_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+        Window window = dialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        final PhotoView imageViewPost = dialog.findViewById(R.id.showImageView);
+        final ImageButton imageButtonBack = dialog.findViewById(R.id.showBtnBack);
+        Glide.with(mContext).load(imgURL).into(imageViewPost);
+
+        imageButtonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
 
     }
 
@@ -327,7 +357,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 }
             }
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError error) {
             }
         });
 
@@ -448,5 +478,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         });
 
     }
+
+
+
 
 }

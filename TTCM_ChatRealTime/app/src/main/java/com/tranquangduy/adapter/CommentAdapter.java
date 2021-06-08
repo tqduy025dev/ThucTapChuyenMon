@@ -24,10 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tranquangduy.fragments.OnItemClickRecycleView;
 import com.tranquangduy.model.Comment;
 import com.tranquangduy.model.User;
-import com.tranquangduy.ttcm_chatrealtime.MainActivity;
 import com.tranquangduy.ttcm_chatrealtime.ProfileActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 

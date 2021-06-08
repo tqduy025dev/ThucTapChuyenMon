@@ -1,4 +1,4 @@
-package com.tranquangduy.fragments;
+package com.tranquangduy.control;
 
 public interface OnItemClickRecycleView {
     void onItemClick(int position);

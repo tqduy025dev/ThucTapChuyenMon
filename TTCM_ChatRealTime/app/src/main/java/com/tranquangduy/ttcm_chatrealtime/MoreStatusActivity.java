@@ -17,7 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.adapter.UserAdapter;
-import com.tranquangduy.fragments.OnItemClickRecycleView;
+import com.tranquangduy.control.OnItemClickRecycleView;
 import com.tranquangduy.model.User;
 
 import java.util.ArrayList;

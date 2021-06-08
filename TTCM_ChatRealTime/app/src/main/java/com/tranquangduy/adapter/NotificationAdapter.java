@@ -1,6 +1,8 @@
 package com.tranquangduy.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,12 +21,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tranquangduy.fragments.FragmentPostDetail;
 import com.tranquangduy.model.Notification;
 import com.tranquangduy.model.Post;
 import com.tranquangduy.model.User;
+import com.tranquangduy.ttcm_chatrealtime.MessageActivity;
+import com.tranquangduy.ttcm_chatrealtime.ProfileActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotiViewHolder> {
     private final Context mContext;
@@ -59,6 +67,30 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             holder.imgPost.setVisibility(View.GONE);
         }
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (notification.getIspost()) {
+                    SharedPreferences.Editor editor = mContext.getSharedPreferences("MyPreferences", MODE_PRIVATE).edit();
+                    editor.putString("postID", notification.getPostid());
+                    editor.apply();
+
+                    ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                            new FragmentPostDetail()).commit();
+                } else if(notification.getIsmessage()){
+                    Intent intent = new Intent(mContext, MessageActivity.class);
+                    intent.putExtra("userid", notification.getUserid());
+                    mContext.startActivity(intent);
+
+                }else {
+                    Intent intent = new Intent(mContext, ProfileActivity.class);
+                    intent.putExtra("profileID", notification.getUserid());
+                    mContext.startActivity(intent);
+                }
+            }
+        });
+
+
 
     }
 
@@ -68,13 +100,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Post post = dataSnapshot.getValue(Post.class);
                 Glide.with(mContext).load(post.getPostimage()).into(imgPost);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -86,14 +118,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 Glide.with(mContext).load(user.getImageUrl()).into(imgUser);
                 userName.setText(user.getUserName());
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
 

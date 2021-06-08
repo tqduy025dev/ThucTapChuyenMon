@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.tranquangduy.ttcm_chatrealtime"
-        minSdkVersion 28
+        minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -50,6 +50,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
