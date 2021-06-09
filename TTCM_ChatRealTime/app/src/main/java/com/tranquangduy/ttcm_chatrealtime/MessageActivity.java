@@ -69,6 +69,8 @@ public class MessageActivity extends AppCompatActivity {
 
     private MessageAdapter messageAdapter;
     private List<Message> listMessage;
+    private Thread threadReadMess; // đa luồng nhận gửi tin nhắn
+    private Thread threadSendMess;
 
     private Uri imageUri;
     private StorageReference storageReference;
@@ -77,7 +79,6 @@ public class MessageActivity extends AppCompatActivity {
     private User user = null;
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;
-    private ValueEventListener seenListener;
 
 
     @Override
@@ -101,17 +102,6 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        btnSendImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "CHỌN ẢNH"), REQUEST_CODE);
-            }
-        });
-
-
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,6 +116,17 @@ public class MessageActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MessageActivity.this, "Vui lòng nhập nội dung tin nhắn!", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+
+        btnSendImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "CHỌN ẢNH"), REQUEST_CODE);
             }
         });
 
@@ -152,42 +153,47 @@ public class MessageActivity extends AppCompatActivity {
     // 1 cái của click fragment message
     //1 cái của new chat
     private void getData() {
-        Intent intent = getIntent();
-        if (intent != null) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = getIntent();
+                if (intent != null) {
+                    if (intent.hasExtra("userid")) {
+                        String userIDNotification = intent.getStringExtra("userid");
 
-            if (intent.hasExtra("userid")) {
-                String userIDNotification = intent.getStringExtra("userid");
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userIDNotification);
+                        reference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                user = snapshot.getValue(User.class);
+                                Glide.with(getApplicationContext()).load(user.getImageUrl()).into(imgAvt);
+                                txtUserName.setText(user.getUserName());
 
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userIDNotification);
-                reference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        user = snapshot.getValue(User.class);
+                                readMessage(firebaseUser.getUid(), userIDNotification, user.getImageUrl());
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                            }
+                        });
+                    }
+
+                    String t = getString(R.string.only_me);
+                    user = (User) intent.getSerializableExtra("user_message");
+                    if (user != null) {
+                        if (user.getId().equals(firebaseUser.getUid())) {
+                            txtUserName.setText(t);
+                        } else {
+                            txtUserName.setText(user.getUserName());
+                        }
+
                         Glide.with(getApplicationContext()).load(user.getImageUrl()).into(imgAvt);
-                        txtUserName.setText(user.getUserName());
 
-                        readMessage(firebaseUser.getUid(), userIDNotification, user.getImageUrl());
+                        readMessage(firebaseUser.getUid(), user.getId(), user.getImageUrl());
                     }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
-            }
-
-            String t = getString(R.string.only_me);
-            user = (User) intent.getSerializableExtra("user_message");
-            if(user != null){
-                if (user.getId().equals(firebaseUser.getUid())) {
-                    txtUserName.setText(t);
-                } else {
-                    txtUserName.setText(user.getUserName());
                 }
-
-                Glide.with(getApplicationContext()).load(user.getImageUrl()).into(imgAvt);
-
-                readMessage(firebaseUser.getUid(), user.getId(), user.getImageUrl());
             }
-        }
+        });
 
     }
 
@@ -198,7 +204,7 @@ public class MessageActivity extends AppCompatActivity {
         String myName = preferences.getString("mUserName", "");
 
         // nếu là chính mình thì khỏi push notifi
-        if(!userID.equals(firebaseUser.getUid())){
+        if (!userID.equals(firebaseUser.getUid())) {
             reference = FirebaseDatabase.getInstance().getReference("Users").child(userID);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -280,9 +286,9 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("isseen", Boolean.FALSE);
         hashMap.put("time", ServerValue.TIMESTAMP);
         // gửi cho chính mình :)) thì gửi 1 cái thôi
-        if(sender.equals(receiver)){
+        if (sender.equals(receiver)) {
             reference.child("Chats").child(sender).push().setValue(hashMap);
-        }else {
+        } else {
             reference.child("Chats").child(sender).push().setValue(hashMap);
             reference.child("Chats").child(receiver).push().setValue(hashMap);
         }
@@ -294,34 +300,38 @@ public class MessageActivity extends AppCompatActivity {
 
 
     private void readMessage(String myID, String userID, String imgURL) {
-        listMessage = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference("Chats").child(myID);
-        reference.addValueEventListener(new ValueEventListener() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listMessage.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Message msg = dataSnapshot.getValue(Message.class);
-                    if (msg.getSender().equals(myID) && msg.getReceiver().equals(userID) ||
-                            msg.getSender().equals(userID) && msg.getReceiver().equals(myID)) {
-                        listMessage.add(msg);
+            public void run() {
+                listMessage = new ArrayList<>();
+                reference = FirebaseDatabase.getInstance().getReference("Chats").child(myID);
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        listMessage.clear();
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            Message msg = dataSnapshot.getValue(Message.class);
+                            if (msg.getSender().equals(myID) && msg.getReceiver().equals(userID) ||
+                                    msg.getSender().equals(userID) && msg.getReceiver().equals(myID)) {
+                                listMessage.add(msg);
+                            }
+                        }
+
+                        if (messageAdapter.getItemCount() != 0) {
+                            recyclerViewMessage.smoothScrollToPosition(listMessage.size() - 1);
+                        }
+                        messageAdapter.notifyDataSetChanged();
+
                     }
-                }
 
-                if (messageAdapter.getItemCount() != 0) {
-                    recyclerViewMessage.smoothScrollToPosition(listMessage.size() - 1);
-                }
-                messageAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+                messageAdapter = new MessageAdapter(MessageActivity.this, listMessage, imgURL);
+                recyclerViewMessage.setAdapter(messageAdapter);
             }
         });
-
-
-        messageAdapter = new MessageAdapter(MessageActivity.this, listMessage, imgURL);
-        recyclerViewMessage.setAdapter(messageAdapter);
 
     }
 
@@ -334,7 +344,7 @@ public class MessageActivity extends AppCompatActivity {
             hashMap.put("userid", firebaseUser.getUid());
             hashMap.put("text", t);
             hashMap.put("postid", "");
-            hashMap.put("ismessage",Boolean.TRUE);
+            hashMap.put("ismessage", Boolean.TRUE);
             hashMap.put("ispost", Boolean.FALSE);
             reference.push().setValue(hashMap);
         }
@@ -385,9 +395,9 @@ public class MessageActivity extends AppCompatActivity {
                         hashMap.put("isseen", Boolean.FALSE);
                         hashMap.put("time", ServerValue.TIMESTAMP);
                         // gửi cho chính mình :)) thì gửi 1 cái thôi
-                        if(sender.equals(receiver)){
+                        if (sender.equals(receiver)) {
                             reference.child("Chats").child(sender).push().setValue(hashMap);
-                        }else {
+                        } else {
                             reference.child("Chats").child(sender).push().setValue(hashMap);
                             reference.child("Chats").child(receiver).push().setValue(hashMap);
                         }

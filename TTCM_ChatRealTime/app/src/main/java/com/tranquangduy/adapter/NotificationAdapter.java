@@ -14,18 +14,16 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tranquangduy.fragments.FragmentPostDetail;
 import com.tranquangduy.model.Notification;
 import com.tranquangduy.model.Post;
 import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.MessageActivity;
+import com.tranquangduy.ttcm_chatrealtime.PostDetailActivity;
 import com.tranquangduy.ttcm_chatrealtime.ProfileActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
@@ -71,12 +69,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             @Override
             public void onClick(View view) {
                 if (notification.getIspost()) {
-                    SharedPreferences.Editor editor = mContext.getSharedPreferences("MyPreferences", MODE_PRIVATE).edit();
-                    editor.putString("postID", notification.getPostid());
-                    editor.apply();
+                    Intent intent = new Intent(mContext, PostDetailActivity.class);
+                    intent.putExtra("postID", notification.getPostid());
+                    mContext.startActivity(intent);
 
-                    ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                            new FragmentPostDetail()).commit();
                 } else if(notification.getIsmessage()){
                     Intent intent = new Intent(mContext, MessageActivity.class);
                     intent.putExtra("userid", notification.getUserid());

@@ -18,19 +18,20 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <ImageView
                     android:id="@+id/img_profile_back"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/ic_back"/>
+                    android:src="@drawable/ic_back" />
 
                 <TextView
                     android:id="@+id/txtBar_profile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="10dp"
                     android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
                     android:layout_toEndOf="@+id/img_profile_back"
                     android:text="@string/profile"
                     android:textColor="@color/black"
@@ -186,9 +187,9 @@
                                         android:textStyle="bold" />
 
                                     <TextView
-                                        android:gravity="center"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:gravity="center"
                                         android:text="@string/following" />
 
                                 </LinearLayout>
@@ -204,16 +205,16 @@
                             android:textSize="15dp" />
 
                         <androidx.appcompat.widget.AppCompatButton
-                            android:textAllCaps="false"
                             android:id="@+id/btn_profile_follow"
                             android:layout_width="200dp"
                             android:layout_height="30dp"
-                            android:layout_marginTop="10dp"
                             android:layout_gravity="center"
+                            android:layout_marginTop="10dp"
                             android:layout_marginBottom="3dp"
-                            android:visibility="gone"
                             android:background="@drawable/background_text"
-                            android:padding="5dp"/>
+                            android:padding="5dp"
+                            android:textAllCaps="false"
+                            android:visibility="gone" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -231,7 +232,7 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_edit_profile"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="30dp"
                     android:background="@drawable/background_text"
                     android:text="@string/edit_profile"
                     android:textSize="15dp" />
@@ -243,41 +244,31 @@
                 android:id="@+id/last_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/mid_bar"
                 android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+
+                <ImageButton
+                    android:id="@+id/btnMyPhoto"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_cloud_background" />
 
-                    <ImageButton
-                        android:id="@+id/btnMyPhoto"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_baseline_grid_view" />
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <ImageButton
+                    android:id="@+id/btnSavePhoto"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <ImageButton
-                        android:id="@+id/btnSavePhoto"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_baseline_save" />
-                </LinearLayout>
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_save" />
 
 
             </LinearLayout>

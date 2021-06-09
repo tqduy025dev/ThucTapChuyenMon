@@ -193,8 +193,6 @@ public class PostActivity extends AppCompatActivity{
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
             imagePostUri = data.getData();
 
-            edtDescription.setText(imagePostUri + "");
-
             imgViewPost.setVisibility(View.VISIBLE);
             imgViewPost.setImageURI(imagePostUri);
         }else {

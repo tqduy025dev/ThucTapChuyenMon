@@ -1,10 +1,15 @@
 package com.tranquangduy.adapter;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ScaleGestureDetector;
@@ -19,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -39,6 +45,11 @@ import com.tranquangduy.ttcm_chatrealtime.MoreStatusActivity;
 import com.tranquangduy.ttcm_chatrealtime.ProfileActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -48,7 +59,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     private List<Post> mPost;
 
     private FirebaseUser firebaseUser;
-    private ScaleGestureDetector scaleGestureDetector;
+    private Thread thread; // đa luồng khi nhấn vào tải ảnh
 
     public PostAdapter(Context mContext, List<Post> mPost) {
         this.mContext = mContext;
@@ -167,7 +178,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             @Override
             public void onClick(View v) {
 
-                openMenu(post , v);
+                openMenu(post ,holder.imageViewPost ,v);
 
             }
         });
@@ -179,10 +190,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             }
         });
 
-
-
-
-
     }
 
 
@@ -191,8 +198,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public int getItemCount() {
         return mPost.size();
     }
-
-
 
 
     public class PostViewHolder extends RecyclerView.ViewHolder{
@@ -248,7 +253,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
 
-    private void openMenu(Post post, View v){
+    private void openMenu(Post post,final ImageView imgPost, View v){
 
         PopupMenu popupMenu = new PopupMenu(mContext, v);
 
@@ -276,6 +281,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     case R.id.menu_edit_post :
                         editPost(post.getPostid());
 
+                    case R.id.menu_edit_download :
+                        downloadImage(imgPost);
                     default: return false;
                 }
             }
@@ -289,6 +296,35 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         popupMenu.show();
 
 
+    }
+
+    private void downloadImage(ImageView imgPost){
+        if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Bitmap bitmap = ((BitmapDrawable) imgPost.getDrawable()).getBitmap();
+                    File filePath = Environment.getExternalStorageDirectory();
+                    File dir = new File(filePath + "/DCIM");
+                    dir.mkdir();
+                    File file = new File(dir, System.currentTimeMillis() + ".jpg");
+                    OutputStream outputStream;
+                    try {
+                        outputStream = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                        outputStream.flush();
+                        outputStream.close();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            thread.start();
+            Toast.makeText(mContext, "Tải xuống thành công!", Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(mContext, "Tải thất bại!", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -372,6 +408,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         HashMap<String, Object> map = new HashMap<>();
         map.put("userid", firebaseUser.getUid());
         map.put("text", "Đã thích ảnh của bạn");
+        map.put("ismessage", Boolean.FALSE);
         map.put("postid", postid);
         map.put("ispost", Boolean.TRUE);
 

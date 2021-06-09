@@ -49,6 +49,14 @@
                 android:paddingTop="8dp"
                 android:visibility="gone"
                 android:padding="5dp"/>
+            <ImageView
+                android:id="@+id/imgItem_chat_download"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_toEndOf="@+id/imgItem_chat_message"
+                android:src="@drawable/ic_baseline_file_download"
+                android:layout_centerVertical="true"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/txtItem_chat_time"

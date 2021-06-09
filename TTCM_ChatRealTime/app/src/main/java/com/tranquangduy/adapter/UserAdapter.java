@@ -153,8 +153,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         });
 
 
-
-
     }
 
 
@@ -187,6 +185,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         ImageView imgDelete;
         OnItemClickRecycleView onItemClickRecycleViewHolder;
         boolean check = false;
+
         public UserViewHolder(@NonNull View itemView, OnItemClickRecycleView onItemClickRecycleViewHolder) {
             super(itemView);
             this.onItemClickRecycleViewHolder = onItemClickRecycleViewHolder;
@@ -208,15 +207,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         @Override
         public boolean onLongClick(View v) {
             onItemClickRecycleViewHolder.onItemLongClick(getAdapterPosition());
-            if(isMessage){
-                if(!check){
+            if (isMessage) {
+                if (!check) {
                     imgDelete.setVisibility(View.VISIBLE);
                     check = true;
-                }else {
+                } else {
                     imgDelete.setVisibility(View.GONE);
                     check = false;
                 }
-            }else {
+            } else {
                 imgDelete.setVisibility(View.GONE);
             }
 
@@ -226,13 +225,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
 
-    private void deleteChat(){
+    private void deleteChat() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(firebaseUser.getUid()).child(chatListID);
         reference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Toast.makeText(mContext, mContext.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -246,7 +245,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     Message msg = dataSnapshot.getValue(Message.class);
                     if (msg.getSender().equals(firebaseUser.getUid()) && msg.getReceiver().equals(chatListID) ||
                             msg.getSender().equals(chatListID) && msg.getReceiver().equals(firebaseUser.getUid())) {
-                            dataSnapshot.getRef().removeValue();
+                        dataSnapshot.getRef().removeValue();
                     }
                 }
             }
@@ -314,8 +313,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 }
 
                 if (theLastMessage.equals("imAGe")) {
-                    String t = mContext.getString(R.string.notification_send_img);
-                    txt_lastMessage.setText(t);
+                    String t1 = mContext.getString(R.string.notification_my_send_img);
+                    txt_lastMessage.setText(t1);
                 } else if (!theLastMessage.equals("deFauLt")) {
                     txt_lastMessage.setText(theLastMessage);
                 } else {

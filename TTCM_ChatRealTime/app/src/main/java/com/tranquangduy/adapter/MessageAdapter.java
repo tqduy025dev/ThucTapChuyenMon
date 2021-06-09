@@ -1,32 +1,46 @@
 package com.tranquangduy.adapter;
 
+import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.tranquangduy.model.Message;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder>{
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
     public static final int MSG_TYPE_LEFT = 0;
     public static final int MSG_TYPE_RIGHT = 1;
 
@@ -34,7 +48,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private final List<Message> mMessage;
     private final String imgURL;
 
-    FirebaseUser firebaseUser;
+    private FirebaseUser firebaseUser;
+    private boolean check = false;
 
     public MessageAdapter(Context mContext, List<Message> mMessage, String imgURL) {
         this.mContext = mContext;
@@ -57,6 +72,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+
         Message msg = mMessage.get(position);
 
         Calendar calendar = Calendar.getInstance();
@@ -64,8 +80,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm", Locale.getDefault());
 
 
-
-        if(msg.getType().equals("text")){
+        if (msg.getType().equals("text")) {
             holder.txtShowMessage.setVisibility(View.VISIBLE);
             holder.txtShowMessage.setText(msg.getMessage());
             holder.txtTime.setVisibility(View.VISIBLE);
@@ -73,7 +88,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             holder.txtTimeImg.setVisibility(View.GONE);
             holder.imgMessage.setVisibility(View.GONE);
-        }else {
+        } else {
             holder.imgMessage.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(msg.getMessage()).into(holder.imgMessage);
             holder.txtTimeImg.setVisibility(View.VISIBLE);
@@ -85,29 +100,102 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
 
 
-        if(getItemViewType(position) == MSG_TYPE_LEFT){
+        if (getItemViewType(position) == MSG_TYPE_LEFT) {
             Glide.with(mContext).load(imgURL).into(holder.imgAvatar);
         }
 
-        if(getItemViewType(position) == MSG_TYPE_RIGHT){
-            if(position == getItemCount() -1){
-                if(msg.getIsseen()){
+        if (getItemViewType(position) == MSG_TYPE_RIGHT) {
+            if (position == getItemCount() - 1) {
+                if (msg.getIsseen()) {
                     holder.txtIsseen.setText("đã xem");
-                }else {
+                } else {
                     holder.txtIsseen.setText("đã nhận");
                 }
-            }else {
+            } else {
                 holder.txtIsseen.setVisibility(View.GONE);
             }
 
         }
 
 
+        holder.imgMessage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(!check){
+                    holder.imgDownload.setVisibility(View.VISIBLE);
+                    check = true;
+                }else {
+                    holder.imgDownload.setVisibility(View.GONE);
+                    check = false;
+                }
+
+
+                holder.imgDownload.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        holder.imgDownload.setVisibility(View.GONE);
+                        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Bitmap bitmap = ((BitmapDrawable) holder.imgMessage.getDrawable()).getBitmap();
+                                File filePath = Environment.getExternalStorageDirectory();
+                                File dir = new File(filePath + "/DCIM");
+                                dir.mkdir();
+                                File file = new File(dir, System.currentTimeMillis() + ".jpg");
+                                OutputStream outputStream;
+                                try {
+                                    outputStream = new FileOutputStream(file);
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                                    outputStream.flush();
+                                    outputStream.close();
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                        thread.start();
+                            Toast.makeText(mContext, "Tải xuống thành công!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(mContext, "Tải thất bại!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                return true;
+            }
+        });
+
+
+        holder.imgMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                final Dialog dialog = new Dialog(mContext);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.show_image_view_dialog);
+                dialog.setCanceledOnTouchOutside(true);
+                Window window = dialog.getWindow();
+                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+                final PhotoView imageViewPost = dialog.findViewById(R.id.showImageView);
+                final ImageButton imageButtonBack = dialog.findViewById(R.id.showBtnBack);
+                Glide.with(mContext).load(msg.getMessage()).into(imageViewPost);
+
+                imageButtonBack.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.show();
+            }
+        });
 
 
     }
-
-
 
 
     @Override
@@ -118,19 +206,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView txtShowMessage;
-        ImageView imgAvatar, imgMessage;
+        ImageView imgAvatar, imgMessage, imgDownload;
         TextView txtTime;
         TextView txtTimeImg;
         TextView txtIsseen;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgAvatar =  itemView.findViewById(R.id.imgItem_chat_avatar);
-            txtIsseen =  itemView.findViewById(R.id.txtItem_chat_seen);
+            imgAvatar = itemView.findViewById(R.id.imgItem_chat_avatar);
+            txtIsseen = itemView.findViewById(R.id.txtItem_chat_seen);
             txtShowMessage = itemView.findViewById(R.id.txtItem_chat_messageContent);
             imgMessage = itemView.findViewById(R.id.imgItem_chat_message);
             txtTime = itemView.findViewById(R.id.txtItem_chat_time);
             txtTimeImg = itemView.findViewById(R.id.txtItem_chat_timeImg);
+            imgDownload = itemView.findViewById(R.id.imgItem_chat_download);
+
 
         }
     }
@@ -138,9 +228,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public int getItemViewType(int position) {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(mMessage.get(position).getSender().equals(firebaseUser.getUid())){
+        if (mMessage.get(position).getSender().equals(firebaseUser.getUid())) {
             return MSG_TYPE_RIGHT;
-        }else {
+        } else {
             return MSG_TYPE_LEFT;
         }
     }

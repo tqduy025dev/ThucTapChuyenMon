@@ -80,7 +80,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
             @Override
             public void afterTextChanged(Editable s) {
-                searchUsers(s.toString().toLowerCase());
+//                searchUsers(s.toString().toLowerCase());
             }
         });
 
@@ -157,9 +157,9 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
                 filterList.add(user);
             }
         }
-
-        userAdapter.SEARCH_LISTUSER(filterList); // sử dụng interface
-
+        if(filterList != null){
+            userAdapter.SEARCH_LISTUSER(filterList); // sử dụng interface
+        }
 
 
     }

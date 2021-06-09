@@ -3,6 +3,8 @@ package com.tranquangduy.ttcm_chatrealtime;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -29,11 +31,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.tranquangduy.adapter.PhotoAdapter;
 import com.tranquangduy.fragments.FragmentProfile;
 import com.tranquangduy.model.Post;
 import com.tranquangduy.model.User;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
     ImageButton btnMyPhoto, btnSavePhoto, btnLogout;
@@ -41,12 +47,21 @@ public class ProfileActivity extends AppCompatActivity {
     ImageView imgViewAvt, imgBack;
     TextView txtPost, txtFollowers, txtFollowing;
     TextView txtUserName, txtBio, txtBarProfile, txtWebpage;
+    RecyclerView recyclerViewPhoTo;
+    RecyclerView recyclerViewSave;
 
     private DatabaseReference reference;
     private FirebaseUser firebaseUser;
     private Intent intent;
     private String userID;
     private User user;
+
+    private List<String> mSave;
+    private List<Post> listPost_mPhoto;
+    private PhotoAdapter photoAdapter_mPhoto;
+
+    private List<Post> listPost_mSave;
+    private PhotoAdapter photoAdapter_mSave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +72,8 @@ public class ProfileActivity extends AppCompatActivity {
         getUser();
         addEvent();
         getFollowPost();
+        myFotos();
+        mySave();
 
 
     }
@@ -85,6 +102,76 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         isFollowing();
+    }
+
+    private void myFotos(){
+        listPost_mPhoto = new ArrayList<>();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listPost_mPhoto.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    Post post = dataSnapshot.getValue(Post.class);
+                    if (post.getPublisher().equals(userID)){
+                        listPost_mPhoto.add(post);
+                    }
+                }
+                Collections.reverse(listPost_mPhoto);
+                photoAdapter_mPhoto.notifyDataSetChanged();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+        photoAdapter_mPhoto = new PhotoAdapter(this, listPost_mPhoto);
+        recyclerViewPhoTo.setAdapter(photoAdapter_mPhoto);
+    }
+
+    private void mySave(){
+        mSave= new ArrayList<>();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saves").child(userID);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    mSave.add(dataSnapshot.getKey());
+                }
+                readSave();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void readSave(){
+        listPost_mSave = new ArrayList<>();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listPost_mSave.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    Post post = dataSnapshot.getValue(Post.class);
+                    for (String id : mSave) {
+                        if (post.getPostid().equals(id)) {
+                            listPost_mSave.add(post);
+                        }
+                    }
+                }
+                photoAdapter_mSave.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        photoAdapter_mSave = new PhotoAdapter(this, listPost_mSave);
+        recyclerViewSave.setAdapter(photoAdapter_mSave);
     }
 
     private void getFollowPost() {
@@ -144,10 +231,12 @@ public class ProfileActivity extends AppCompatActivity {
 
         if(userID.equals(firebaseUser.getUid())){
             btnFollow.setVisibility(View.GONE);
+            btnSavePhoto.setVisibility(View.VISIBLE);
             btnEditProfile.setVisibility(View.VISIBLE);
         }else {
             btnEditProfile.setVisibility(View.GONE);
             btnFollow.setVisibility(View.VISIBLE);
+            btnSavePhoto.setVisibility(View.GONE);
         }
 
         txtWebpage.setOnClickListener(new View.OnClickListener() {
@@ -224,6 +313,27 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
 
+        btnSavePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewPhoTo.setVisibility(View.GONE);
+                btnMyPhoto.setImageResource(R.drawable.ic_baseline_cloud);
+                btnSavePhoto.setImageResource(R.drawable.ic_baseline_savebackground);
+                recyclerViewSave.setVisibility(View.VISIBLE);
+            }
+        });
+
+        btnMyPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewSave.setVisibility(View.GONE);
+                btnMyPhoto.setImageResource(R.drawable.ic_baseline_cloud_background);
+                btnSavePhoto.setImageResource(R.drawable.ic_baseline_save);
+                recyclerViewPhoTo.setVisibility(View.VISIBLE);
+            }
+        });
+
+
     }
 
 
@@ -242,6 +352,14 @@ public class ProfileActivity extends AppCompatActivity {
         imgBack = findViewById(R.id.img_profile_back);
         btnEditProfile =  findViewById(R.id.btn_edit_profile);
         btnLogout = findViewById(R.id.imgLogout);
+
+        recyclerViewPhoTo = findViewById(R.id.recyclerView_photo);
+        recyclerViewPhoTo.setHasFixedSize(true);
+        recyclerViewPhoTo.setLayoutManager(new GridLayoutManager(this, 4));
+
+        recyclerViewSave = findViewById(R.id.recyclerView_save);
+        recyclerViewSave.setHasFixedSize(true);
+        recyclerViewSave.setLayoutManager(new GridLayoutManager(this, 4));
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
@@ -313,6 +431,7 @@ public class ProfileActivity extends AppCompatActivity {
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", t);
         hashMap.put("postid", "");
+        hashMap.put("ismessage", Boolean.FALSE);
         hashMap.put("ispost", Boolean.FALSE);
         reference.push().setValue(hashMap);
     }

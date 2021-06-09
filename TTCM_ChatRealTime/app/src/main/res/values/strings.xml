@@ -37,6 +37,7 @@
     <string name="webpage">Trang web</string>
     <string name="profile">Trang cá nhân</string>
     <string name="notification_send_img">Đã gửi cho bạn 1 ảnh</string>
+    <string name="notification_my_send_img">Đã gửi 1 ảnh</string>
     <string name="notification_send_text">Đã gửi cho bạn 1 tin nhắn</string>
     <string name="notification_follow">Đang bắt đầu theo dõi bạn</string>
     <string name="only_me">Chỉ có bạn</string>
@@ -46,6 +47,7 @@
     <string name="deleted">Đã xoá</string>
     <string name="cancel">Huỷ</string>
     <string name="update">Sửa</string>
+    <string name="download">Tải ảnh</string>
     <string name="update_post">Sửa bài viết</string>
     <string name="report_post">Chúng tôi đã ghi nhận báo cáo của bạn</string>
     <string name="check_email">Vui lòng nhập địa chỉ Email</string>
