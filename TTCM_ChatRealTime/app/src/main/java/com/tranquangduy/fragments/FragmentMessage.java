@@ -37,7 +37,11 @@ import com.tranquangduy.ttcm_chatrealtime.NewChatActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Stack;
+import java.util.function.UnaryOperator;
 
 
 public class FragmentMessage extends Fragment implements OnItemClickRecycleView {
@@ -66,8 +70,6 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
     }
 
 
-
-
     private void addEvent() {
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -80,7 +82,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
             @Override
             public void afterTextChanged(Editable s) {
-//                searchUsers(s.toString().toLowerCase());
+                searchUsers(s.toString().toLowerCase());
             }
         });
 
@@ -111,7 +113,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
                     ChatList chatList = dataSnapshot.getValue(ChatList.class);
                     listChat.add(chatList);
                 }
-
+                compareToLastTime();
                 readMessageList();
             }
 
@@ -123,22 +125,35 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
     }
 
+    private void compareToLastTime() {
+        listChat.sort(new Comparator<ChatList>() {
+            @Override
+            public int compare(ChatList o1, ChatList o2) {
+                return Long.compare(o1.getLasttime(), o2.getLasttime());
+            }
+        });
+        Collections.reverse(listChat);
+    }
+
     private void readMessageList() {
         reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listUser.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    User user = dataSnapshot.getValue(User.class);
-                    for (ChatList chatList : listChat) {
+                for (ChatList chatList : listChat) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        User user = dataSnapshot.getValue(User.class);
                         assert user != null;
                         if (user.getId().equals(chatList.getId())) {
                             listUser.add(user);
                         }
+
                     }
                 }
                 userAdapter.notifyDataSetChanged();
+
+
             }
 
             @Override
@@ -146,9 +161,9 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
             }
         });
-        userAdapter = new UserAdapter(getContext(), listUser, false, true, true, this);
         recyclerView.setAdapter(userAdapter);
     }
+
 
     private void searchUsers(String s) {
         ArrayList<User> filterList = new ArrayList<>();
@@ -157,10 +172,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
                 filterList.add(user);
             }
         }
-        if(filterList != null){
-            userAdapter.SEARCH_LISTUSER(filterList); // sử dụng interface
-        }
-
+        userAdapter.SEARCH_LISTUSER(filterList); // sử dụng interface
 
     }
 
@@ -174,6 +186,7 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
 
         listUser = new ArrayList<>();
         listChat = new ArrayList<>();
+        userAdapter = new UserAdapter(getContext(), listUser, false, true, true, this);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     }
@@ -192,8 +205,6 @@ public class FragmentMessage extends Fragment implements OnItemClickRecycleView 
         // sử dụng interface để truyền dữ liệu cho userAdapter
         userAdapter.UPDATE_USERID(listChat.get(postition).getId());
     }
-
-
 
 
 }

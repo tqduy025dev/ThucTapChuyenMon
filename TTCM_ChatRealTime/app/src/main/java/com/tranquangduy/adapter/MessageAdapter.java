@@ -26,6 +26,11 @@ import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.model.Message;
 import com.tranquangduy.ttcm_chatrealtime.R;
 
@@ -35,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -49,7 +55,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private final String imgURL;
 
     private FirebaseUser firebaseUser;
-    private boolean check = false;
+    private boolean checkDownload = false;
+    private boolean checkDelete = false;
+
 
     public MessageAdapter(Context mContext, List<Message> mMessage, String imgURL) {
         this.mContext = mContext;
@@ -72,9 +80,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-
         Message msg = mMessage.get(position);
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(msg.getTime());
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm", Locale.getDefault());
@@ -99,34 +105,62 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         }
 
-
         if (getItemViewType(position) == MSG_TYPE_LEFT) {
             Glide.with(mContext).load(imgURL).into(holder.imgAvatar);
         }
 
-        if (getItemViewType(position) == MSG_TYPE_RIGHT) {
-            if (position == getItemCount() - 1) {
-                if (msg.getIsseen()) {
-                    holder.txtIsseen.setText("đã xem");
-                } else {
-                    holder.txtIsseen.setText("đã nhận");
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(!checkDelete){
+                    holder.imgDelete.setVisibility(View.VISIBLE);
+                    checkDelete = true;
+                }else {
+                    holder.imgDelete.setVisibility(View.GONE);
+                    checkDelete = false;
                 }
-            } else {
-                holder.txtIsseen.setVisibility(View.GONE);
+                return true;
             }
+        });
 
-        }
+        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.imgDelete.setVisibility(View.GONE);
+                if(getItemViewType(position) == MSG_TYPE_RIGHT){
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+                    reference.child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                               Message message = dataSnapshot.getValue(Message.class);
+
+                               if( msg.getTime() == message.getTime() && msg.getMessage().equals(message.getMessage())){
+                                   dataSnapshot.getRef().removeValue();
+                               }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+
+                }
+
+            }
+        });
 
 
         holder.imgMessage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if(!check){
+                if(!checkDownload){
                     holder.imgDownload.setVisibility(View.VISIBLE);
-                    check = true;
+                    checkDownload = true;
                 }else {
                     holder.imgDownload.setVisibility(View.GONE);
-                    check = false;
+                    checkDownload = false;
                 }
 
 
@@ -140,7 +174,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                             public void run() {
                                 Bitmap bitmap = ((BitmapDrawable) holder.imgMessage.getDrawable()).getBitmap();
                                 File filePath = Environment.getExternalStorageDirectory();
-                                File dir = new File(filePath + "/DCIM");
+                                File dir = new File(filePath + "/Download");
                                 dir.mkdir();
                                 File file = new File(dir, System.currentTimeMillis() + ".jpg");
                                 OutputStream outputStream;
@@ -206,21 +240,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView txtShowMessage;
-        ImageView imgAvatar, imgMessage, imgDownload;
+        ImageView imgAvatar, imgMessage, imgDownload, imgDelete;
         TextView txtTime;
         TextView txtTimeImg;
-        TextView txtIsseen;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             imgAvatar = itemView.findViewById(R.id.imgItem_chat_avatar);
-            txtIsseen = itemView.findViewById(R.id.txtItem_chat_seen);
             txtShowMessage = itemView.findViewById(R.id.txtItem_chat_messageContent);
             imgMessage = itemView.findViewById(R.id.imgItem_chat_message);
             txtTime = itemView.findViewById(R.id.txtItem_chat_time);
             txtTimeImg = itemView.findViewById(R.id.txtItem_chat_timeImg);
             imgDownload = itemView.findViewById(R.id.imgItem_chat_download);
-
+            imgDelete = itemView.findViewById(R.id.imgItem_chat_delete);
 
         }
     }

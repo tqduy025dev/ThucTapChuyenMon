@@ -56,7 +56,7 @@ import java.util.Objects;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder>{
     private final Context mContext;
-    private List<Post> mPost;
+    private final List<Post> mPost;
 
     private FirebaseUser firebaseUser;
     private Thread thread; // đa luồng khi nhấn vào tải ảnh
@@ -269,6 +269,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
                                     deleteNotification(id, firebaseUser.getUid());
+                                    Toast.makeText(mContext, "Đã xoá!", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -280,7 +281,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
                     case R.id.menu_edit_post :
                         editPost(post.getPostid());
-
+                        return true;
                     case R.id.menu_edit_download :
                         downloadImage(imgPost);
                     default: return false;
@@ -292,6 +293,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         if (!post.getPublisher().equals(firebaseUser.getUid())){
             popupMenu.getMenu().findItem(R.id.menu_delete).setVisible(false);
             popupMenu.getMenu().findItem(R.id.menu_edit_post).setVisible(false);
+        }
+        if(post.getPostimage().equals("noImage")){
+            popupMenu.getMenu().findItem(R.id.menu_edit_download).setVisible(false);
         }
         popupMenu.show();
 
@@ -305,7 +309,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 public void run() {
                     Bitmap bitmap = ((BitmapDrawable) imgPost.getDrawable()).getBitmap();
                     File filePath = Environment.getExternalStorageDirectory();
-                    File dir = new File(filePath + "/DCIM");
+                    File dir = new File(filePath + "/Download");
                     dir.mkdir();
                     File file = new File(dir, System.currentTimeMillis() + ".jpg");
                     OutputStream outputStream;
@@ -323,12 +327,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             thread.start();
             Toast.makeText(mContext, "Tải xuống thành công!", Toast.LENGTH_SHORT).show();
         }else {
-            Toast.makeText(mContext, "Tải thất bại!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Tải xuống thất bại!", Toast.LENGTH_SHORT).show();
         }
     }
 
 
-    private void editPost(final String postID){
+    private void editPost(final String postID) {
         AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
         alertDialog.setTitle(mContext.getString(R.string.update_post));
         final EditText editText = new EditText(mContext);
@@ -352,7 +356,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 alertDialog.dismiss();
             }
         });
-
 
         alertDialog.show();
     }
@@ -381,7 +384,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    if (Objects.equals(snapshot.child("postid").getValue(), postID)){
+                    if (Objects.equals(dataSnapshot.child("postid").getValue(), postID)){
                         dataSnapshot.getRef().removeValue()
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override

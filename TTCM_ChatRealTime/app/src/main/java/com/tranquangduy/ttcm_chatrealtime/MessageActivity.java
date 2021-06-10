@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentResolver;
@@ -37,6 +38,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -69,8 +71,6 @@ public class MessageActivity extends AppCompatActivity {
 
     private MessageAdapter messageAdapter;
     private List<Message> listMessage;
-    private Thread threadReadMess; // đa luồng nhận gửi tin nhắn
-    private Thread threadSendMess;
 
     private Uri imageUri;
     private StorageReference storageReference;
@@ -88,8 +88,15 @@ public class MessageActivity extends AppCompatActivity {
 
 
         linkView();
-        getData();
         addEvent();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getData();
+            }
+        });
+
+
 
     }
 
@@ -102,33 +109,39 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        btnSendMessage.setOnClickListener(new View.OnClickListener() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void onClick(View v) {
-                String msg = editContentMessage.getText().toString();
-                if (!msg.isEmpty()) {
-                    sendMessage(firebaseUser.getUid(), user.getId(), msg);
-                    addNotification(user.getId());
+            public void run() {
+                btnSendMessage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String msg = editContentMessage.getText().toString();
+                        if (!msg.isEmpty()) {
+                            sendMessage(firebaseUser.getUid(), user.getId(), msg);
+                            addNotification(user.getId());
 
-                    getToken(user.getId(), msg);
+                            getToken(user.getId(), msg);
 
-                    editContentMessage.setText("");
-                } else {
-                    Toast.makeText(MessageActivity.this, "Vui lòng nhập nội dung tin nhắn!", Toast.LENGTH_SHORT).show();
-                }
+                            editContentMessage.setText("");
+                        } else {
+                            Toast.makeText(MessageActivity.this, "Vui lòng nhập nội dung tin nhắn!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+
+                btnSendImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, "CHỌN ẢNH"), REQUEST_CODE);
+                    }
+                });
             }
         });
 
-
-        btnSendImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "CHỌN ẢNH"), REQUEST_CODE);
-            }
-        });
 
     }
 
@@ -142,7 +155,10 @@ public class MessageActivity extends AppCompatActivity {
         btnSendImage = findViewById(R.id.btn_sendImage);
         recyclerViewMessage = findViewById(R.id.recycleView_message);
         recyclerViewMessage.setHasFixedSize(true);
-        recyclerViewMessage.setLayoutManager(new LinearLayoutManager(MessageActivity.this));
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MessageActivity.this);
+        linearLayoutManager.setSmoothScrollbarEnabled(true);
+        recyclerViewMessage.setLayoutManager(linearLayoutManager);
 
         storageReference = FirebaseStorage.getInstance().getReference("MessageImage");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -153,47 +169,43 @@ public class MessageActivity extends AppCompatActivity {
     // 1 cái của click fragment message
     //1 cái của new chat
     private void getData() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = getIntent();
-                if (intent != null) {
-                    if (intent.hasExtra("userid")) {
-                        String userIDNotification = intent.getStringExtra("userid");
+        Intent intent = getIntent();
+        if (intent != null) {
+            if (intent.hasExtra("userid")) {
+                String userIDNotification = intent.getStringExtra("userid");
 
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userIDNotification);
-                        reference.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                user = snapshot.getValue(User.class);
-                                Glide.with(getApplicationContext()).load(user.getImageUrl()).into(imgAvt);
-                                txtUserName.setText(user.getUserName());
-
-                                readMessage(firebaseUser.getUid(), userIDNotification, user.getImageUrl());
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                            }
-                        });
-                    }
-
-                    String t = getString(R.string.only_me);
-                    user = (User) intent.getSerializableExtra("user_message");
-                    if (user != null) {
-                        if (user.getId().equals(firebaseUser.getUid())) {
-                            txtUserName.setText(t);
-                        } else {
-                            txtUserName.setText(user.getUserName());
-                        }
-
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userIDNotification);
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        user = snapshot.getValue(User.class);
                         Glide.with(getApplicationContext()).load(user.getImageUrl()).into(imgAvt);
+                        txtUserName.setText(user.getUserName());
 
-                        readMessage(firebaseUser.getUid(), user.getId(), user.getImageUrl());
+                        readMessage(firebaseUser.getUid(), userIDNotification, user.getImageUrl());
                     }
-                }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
             }
-        });
+
+            String t = getString(R.string.only_me);
+            user = (User) intent.getSerializableExtra("user_message");
+            if (user != null) {
+                if (user.getId().equals(firebaseUser.getUid())) {
+                    txtUserName.setText(t);
+                } else {
+                    txtUserName.setText(user.getUserName());
+                }
+
+                Glide.with(getApplicationContext()).load(user.getImageUrl()).into(imgAvt);
+
+                readMessage(firebaseUser.getUid(), user.getId(), user.getImageUrl());
+            }
+        }
+
 
     }
 
@@ -293,45 +305,53 @@ public class MessageActivity extends AppCompatActivity {
             reference.child("Chats").child(receiver).push().setValue(hashMap);
         }
         // chat list này khỏi cần if vì key trùng nên tự update dc
-        reference.child("ChatList").child(firebaseUser.getUid()).child(user.getId()).child("id").setValue(user.getId());
-        reference.child("ChatList").child(user.getId()).child(firebaseUser.getUid()).child("id").setValue(firebaseUser.getUid());
+        // last time để sx list chat trong fragmentmessage
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", user.getId());
+        map.put("lasttime", ServerValue.TIMESTAMP);
+        reference.child("ChatList").child(firebaseUser.getUid()).child(user.getId()).setValue(map);
+
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("id", firebaseUser.getUid());
+        map1.put("lasttime", ServerValue.TIMESTAMP);
+        reference.child("ChatList").child(user.getId()).child(firebaseUser.getUid()).setValue(map1);
+
+
+//        reference.child("ChatList").child(firebaseUser.getUid()).child(user.getId()).child("id").setValue(user.getId());
+//        reference.child("ChatList").child(user.getId()).child(firebaseUser.getUid()).child("id").setValue(firebaseUser.getUid());
 
     }
 
 
     private void readMessage(String myID, String userID, String imgURL) {
-        runOnUiThread(new Runnable() {
+        listMessage = new ArrayList<>();
+        reference = FirebaseDatabase.getInstance().getReference("Chats").child(myID);
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void run() {
-                listMessage = new ArrayList<>();
-                reference = FirebaseDatabase.getInstance().getReference("Chats").child(myID);
-                reference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        listMessage.clear();
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            Message msg = dataSnapshot.getValue(Message.class);
-                            if (msg.getSender().equals(myID) && msg.getReceiver().equals(userID) ||
-                                    msg.getSender().equals(userID) && msg.getReceiver().equals(myID)) {
-                                listMessage.add(msg);
-                            }
-                        }
-
-                        if (messageAdapter.getItemCount() != 0) {
-                            recyclerViewMessage.smoothScrollToPosition(listMessage.size() - 1);
-                        }
-                        messageAdapter.notifyDataSetChanged();
-
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listMessage.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Message msg = dataSnapshot.getValue(Message.class);
+                    if (msg.getSender().equals(myID) && msg.getReceiver().equals(userID) ||
+                            msg.getSender().equals(userID) && msg.getReceiver().equals(myID)) {
+                        listMessage.add(msg);
                     }
+                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
-                messageAdapter = new MessageAdapter(MessageActivity.this, listMessage, imgURL);
-                recyclerViewMessage.setAdapter(messageAdapter);
+                if (messageAdapter.getItemCount() != 0) {
+                    recyclerViewMessage.smoothScrollToPosition(listMessage.size()-1);
+                }
+                messageAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+
+        messageAdapter = new MessageAdapter(MessageActivity.this, listMessage, imgURL);
+        recyclerViewMessage.setAdapter(messageAdapter);
 
     }
 
@@ -402,9 +422,18 @@ public class MessageActivity extends AppCompatActivity {
                             reference.child("Chats").child(receiver).push().setValue(hashMap);
                         }
 
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("id", user.getId());
+                        map.put("lasttime", ServerValue.TIMESTAMP);
+                        reference.child("ChatList").child(firebaseUser.getUid()).child(user.getId()).updateChildren(map);
 
-                        reference.child("ChatList").child(firebaseUser.getUid()).child(user.getId()).child("id").setValue(user.getId());
-                        reference.child("ChatList").child(user.getId()).child(firebaseUser.getUid()).child("id").setValue(firebaseUser.getUid());
+                        Map<String, Object> map1 = new HashMap<>();
+                        map1.put("id", firebaseUser.getUid());
+                        map1.put("lasttime", ServerValue.TIMESTAMP);
+                        reference.child("ChatList").child(user.getId()).child(firebaseUser.getUid()).updateChildren(map1);
+
+//                        reference.child("ChatList").child(firebaseUser.getUid()).child(user.getId()).child("id").setValue(user.getId());
+//                        reference.child("ChatList").child(user.getId()).child(firebaseUser.getUid()).child("id").setValue(firebaseUser.getUid());
                         Toast.makeText(MessageActivity.this, "Successfully!", Toast.LENGTH_SHORT).show();
 
                     }
