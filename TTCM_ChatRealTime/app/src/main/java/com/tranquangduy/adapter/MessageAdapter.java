@@ -112,10 +112,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if(!checkDelete){
+                if (!checkDelete) {
                     holder.imgDelete.setVisibility(View.VISIBLE);
                     checkDelete = true;
-                }else {
+                } else {
                     holder.imgDelete.setVisibility(View.GONE);
                     checkDelete = false;
                 }
@@ -127,26 +127,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             @Override
             public void onClick(View v) {
                 holder.imgDelete.setVisibility(View.GONE);
-                if(getItemViewType(position) == MSG_TYPE_RIGHT){
-                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
-                    reference.child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-                               Message message = dataSnapshot.getValue(Message.class);
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats").child(firebaseUser.getUid());
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            Message message = dataSnapshot.getValue(Message.class);
 
-                               if( msg.getTime() == message.getTime() && msg.getMessage().equals(message.getMessage())){
-                                   dataSnapshot.getRef().removeValue();
-                               }
+                            if (msg.getTime() == message.getTime() && msg.getMessage().equals(message.getMessage())) {
+                                dataSnapshot.getRef().removeValue();
                             }
                         }
+                    }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                        }
-                    });
-
-                }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
 
             }
         });
@@ -155,10 +152,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         holder.imgMessage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if(!checkDownload){
+                if (!checkDownload) {
                     holder.imgDownload.setVisibility(View.VISIBLE);
                     checkDownload = true;
-                }else {
+                } else {
                     holder.imgDownload.setVisibility(View.GONE);
                     checkDownload = false;
                 }
@@ -169,27 +166,27 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     public void onClick(View v) {
                         holder.imgDownload.setVisibility(View.GONE);
                         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Bitmap bitmap = ((BitmapDrawable) holder.imgMessage.getDrawable()).getBitmap();
-                                File filePath = Environment.getExternalStorageDirectory();
-                                File dir = new File(filePath + "/Download");
-                                dir.mkdir();
-                                File file = new File(dir, System.currentTimeMillis() + ".jpg");
-                                OutputStream outputStream;
-                                try {
-                                    outputStream = new FileOutputStream(file);
-                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                                    outputStream.flush();
-                                    outputStream.close();
+                            Thread thread = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Bitmap bitmap = ((BitmapDrawable) holder.imgMessage.getDrawable()).getBitmap();
+                                    File filePath = Environment.getExternalStorageDirectory();
+                                    File dir = new File(filePath + "/Download");
+                                    dir.mkdir();
+                                    File file = new File(dir, System.currentTimeMillis() + ".jpg");
+                                    OutputStream outputStream;
+                                    try {
+                                        outputStream = new FileOutputStream(file);
+                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                                        outputStream.flush();
+                                        outputStream.close();
 
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-                            }
-                        });
-                        thread.start();
+                            });
+                            thread.start();
                             Toast.makeText(mContext, "Tải xuống thành công!", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(mContext, "Tải thất bại!", Toast.LENGTH_SHORT).show();
