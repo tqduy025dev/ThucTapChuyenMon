@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -354,6 +355,8 @@ public class MessageActivity extends AppCompatActivity {
         recyclerViewMessage.setAdapter(messageAdapter);
 
     }
+
+
 
     private void addNotification(String userid) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);

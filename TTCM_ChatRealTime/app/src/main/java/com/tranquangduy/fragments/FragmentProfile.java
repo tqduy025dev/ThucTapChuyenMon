@@ -58,6 +58,8 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -103,6 +105,7 @@ public class FragmentProfile extends Fragment {
     TextView txtUserName, txtBio, txtBarProfile, txtWebpage;
     RecyclerView recyclerViewPhoTo;
     RecyclerView recyclerViewSave;
+    ProgressBar progressProfile;
 
     private StorageReference storageReference;
     private Uri imageUri;
@@ -119,6 +122,7 @@ public class FragmentProfile extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;
+    private boolean check = false;
 
     @Nullable
     @Override
@@ -229,6 +233,8 @@ public class FragmentProfile extends Fragment {
         txtWebpage = view.findViewById(R.id.txt_profile_webpage);
         btnFollow = view.findViewById(R.id.btn_profile_follow);
         imgBack = view.findViewById(R.id.img_profile_back);
+        progressProfile = view.findViewById(R.id.progress_profile);
+
 
         recyclerViewPhoTo = view.findViewById(R.id.recyclerView_photo);
         recyclerViewPhoTo.setHasFixedSize(true);
@@ -394,6 +400,7 @@ public class FragmentProfile extends Fragment {
                         }
                     }
                 }
+                progressProfile.setVisibility(View.GONE);
                 photoAdapter_mSave.notifyDataSetChanged();
             }
 
@@ -420,6 +427,9 @@ public class FragmentProfile extends Fragment {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.custom_dialog);
         dialog.setCanceledOnTouchOutside(false);
+        Window window = dialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
 
         final ImageButton btnCancel = dialog.findViewById(R.id.btn_editProfile_cancel);
         final ImageButton btnAccept = dialog.findViewById(R.id.btn_editProfile_accept);
@@ -428,6 +438,11 @@ public class FragmentProfile extends Fragment {
         final EditText edtFullName = dialog.findViewById(R.id.edt_editProfile_fullName);
         final EditText edtBio = dialog.findViewById(R.id.edt_editProfile_bio);
         final EditText edtWebpage = dialog.findViewById(R.id.edt_editProfile_webpage);
+        final EditText edtOldPass = dialog.findViewById(R.id.edt_editProfile_oldPass);
+        final EditText edtNewPass = dialog.findViewById(R.id.edt_editProfile_newPass);
+        final EditText edtConfimPass = dialog.findViewById(R.id.edt_editProfile_confimNewPass);
+        final Button btnChangePass = dialog.findViewById(R.id.btn_editProfile_changePass);
+
 
         if (getContext() == null) {
             return;
@@ -438,11 +453,10 @@ public class FragmentProfile extends Fragment {
         edtWebpage.setText(user.getWebpage());
         Glide.with(getContext()).load(user.getImageUrl()).into(imgAvt);
 
-
         btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(edtFullName.getText().toString()) || TextUtils.isEmpty(edtUserName.getText().toString())) {
+                if (TextUtils.isEmpty(edtFullName.getText().toString().trim()) || TextUtils.isEmpty(edtUserName.getText().toString().trim())) {
                     Toast.makeText(getContext(), "Không được bỏ trống họ tên và tên người dùng! ", Toast.LENGTH_SHORT).show();
                 } else {
                     String str_userName = edtUserName.getText().toString();
@@ -457,7 +471,78 @@ public class FragmentProfile extends Fragment {
                     map.put("bio", str_bio);
                     map.put("webpage", str_webpage);
                     reference.updateChildren(map);
-                    dialog.dismiss();
+
+                    String str_oldPass = edtOldPass.getText().toString();
+                    String str_newPass = edtNewPass.getText().toString();
+                    String str_confimPass = edtConfimPass.getText().toString();
+
+
+                    ProgressDialog progressDialog = new ProgressDialog(getContext());
+                    progressDialog.setMessage("Xin hãy đợi!...");
+
+                    if(edtOldPass.getVisibility() == View.VISIBLE){
+                        if(!TextUtils.isEmpty(str_oldPass) && !TextUtils.isEmpty(str_newPass) && !TextUtils.isEmpty(str_confimPass)){
+                            if(str_newPass.equals(str_confimPass) && str_newPass.length() >= 8){
+                                progressDialog.show();
+                                AuthCredential credential = EmailAuthProvider.getCredential(firebaseUser.getEmail(), edtOldPass.getText().toString());
+                                firebaseUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            firebaseUser.updatePassword(str_newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        Toast.makeText(getContext(), "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                                                        progressDialog.dismiss();
+                                                        dialog.dismiss();
+                                                    }else {
+                                                        Toast.makeText(getContext(), "Thay đổi thất bại vui lòng thử lại sau!", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                        }else {
+                                            Toast.makeText(getContext(), "Mật khẩu cũ không chính xác", Toast.LENGTH_SHORT).show();
+                                            progressDialog.dismiss();
+                                        }
+
+                                    }
+                                });
+                            }else {
+                                Toast.makeText(getContext(), "Xác nhận mật khẩu không đúng hoặc mật khẩu ít hơn 8 kí tự", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }else if(!TextUtils.isEmpty(str_oldPass) || !TextUtils.isEmpty(str_newPass) || !TextUtils.isEmpty(str_confimPass)){
+                            Toast.makeText(getContext(), "Vui lòng điền đầy đủ thông tin mật khẩu", Toast.LENGTH_SHORT).show();
+                        }else {
+                            dialog.dismiss();
+                        }
+                    }else {
+                        dialog.dismiss();
+                    }
+
+
+
+
+                }
+
+            }
+        });
+
+        check = false;
+        btnChangePass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!check){
+                    edtOldPass.setVisibility(View.VISIBLE);
+                    edtNewPass.setVisibility(View.VISIBLE);
+                    edtConfimPass.setVisibility(View.VISIBLE);
+                    check = true;
+                }else {
+                    edtOldPass.setVisibility(View.GONE);
+                    edtNewPass.setVisibility(View.GONE);
+                    edtConfimPass.setVisibility(View.GONE);
+                    check = false;
                 }
 
             }

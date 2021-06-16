@@ -57,8 +57,13 @@ public class FragmentHome extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         linkView(view);
-        checkFollowing();
-        getData();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                checkFollowing();
+                getData();
+            }
+        });
         addEvent();
 
 
