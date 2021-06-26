@@ -113,7 +113,8 @@ public class FragmentSearch extends Fragment implements OnItemClickRecycleView {
 
 
     private void searchUsers(String s) {
-        Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("userName")
+        Query query = FirebaseDatabase.getInstance().getReference("Users")
+                .orderByChild("userName")
                 .startAt(s)
                 .endAt(s + "\uf8ff");
 

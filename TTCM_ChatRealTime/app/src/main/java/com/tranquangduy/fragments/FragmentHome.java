@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tranquangduy.adapter.PostAdapter;
 import com.tranquangduy.model.Post;
+import com.tranquangduy.model.User;
 import com.tranquangduy.ttcm_chatrealtime.MessageActivity;
 import com.tranquangduy.ttcm_chatrealtime.PostActivity;
 import com.tranquangduy.ttcm_chatrealtime.R;
@@ -71,9 +72,20 @@ public class FragmentHome extends Fragment {
     }
 
     private void getData() {
-        SharedPreferences preferences = getContext().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-        String mImgURL = preferences.getString("mImgURL", "");
-        Glide.with(this).load(mImgURL).into(imgViewAvt);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User mUser = snapshot.getValue(User.class);
+                Glide.with(getContext()).load(mUser.getImageUrl()).into(imgViewAvt);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+
 
     }
 
