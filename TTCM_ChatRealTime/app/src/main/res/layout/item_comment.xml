@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginTop="5dp"
+    android:layout_height="wrap_content">
+
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgItem_comment_Avt"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+        <LinearLayout
+            android:id="@+id/linearComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:layout_marginEnd="7dp"
+            android:background="@drawable/background_text"
+            android:layout_toEndOf="@id/imgItem_comment_Avt">
+
+            <TextView
+                android:id="@+id/txtItem_comment_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="17dp"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/txtItem_comment_commentContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17dp"
+                android:maxLines="5"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imgItem_comment_delete"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_delete"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            android:layout_toEndOf="@+id/linearComment" />
+    </LinearLayout>
+
+
+
+</RelativeLayout>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CommentActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginEnd="15dp"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/img_comment_back"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_back"/>
+            <ImageView
+                android:id="@+id/img_comment_like"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_favorite"/>
+        </RelativeLayout>
+
+
+    </androidx.appcompat.widget.Toolbar>
+    <LinearLayout
+        android:id="@+id/linearlayout"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:background="@drawable/stack"
+        android:layout_marginBottom="10dp"
+        android:layout_height="1dp"
+        android:orientation="horizontal" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom"
+        android:layout_below="@id/linearlayout"/>
+
+    <RelativeLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="4dp"
+        android:layout_alignParentBottom="true">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_comment_avt"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+        <EditText
+            android:id="@+id/txt_comment_addComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/img_comment_avt"
+            android:hint="Viết bình luận..."
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:paddingStart="10dp"
+            android:minHeight="30dp"
+            android:background="@drawable/background_text"
+            android:layout_toLeftOf="@id/img_comment_send"/>
+
+        <ImageView
+            android:id="@+id/img_comment_send"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:text="POST"
+            android:src="@drawable/ic_send"
+            android:layout_marginEnd="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

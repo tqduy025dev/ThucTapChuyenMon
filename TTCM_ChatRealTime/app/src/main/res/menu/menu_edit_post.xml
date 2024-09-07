@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/menu_delete"
+        android:title="@string/delete"/>
+    <item
+        android:id="@+id/menu_edit_post"
+        android:title="@string/update"/>
+    <item
+        android:id="@+id/menu_edit_download"
+        android:title="@string/download"/>
+
+    <item
+        android:id="@+id/menu_report"
+        android:title="@string/report"/>
+
+
+
+</menu>
